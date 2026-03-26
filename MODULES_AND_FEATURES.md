@@ -57,6 +57,15 @@
     - Centralized audit events and field-level change tracking
 24. **platform**
     - Shared platform endpoints and health-level utilities
+25. **dependency_enforcement**
+    - Hard dependency checks (`/tasks/check-dependency`) for START/SUBMIT/APPROVE
+    - Sequential/parallel chain support with approval-only dependency closure
+26. **tez_audit**
+    - Entity-level immutable audit logging with before/after payloads
+    - Sensitive field masking and soft-delete audit pattern
+27. **sla_enforcement**
+    - Priority SLA engine (HIGH=24h, LOW=3 working days, CUSTOM=2 working days)
+    - Breach monitor and escalation-level updates
 
 ## Enterprise control-plane scaffold (`enterprise-saas/apps/api/src/modules`)
 

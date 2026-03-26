@@ -90,6 +90,9 @@ from app.models.wm_ticket import WmTicket
 from app.models.wm_ticket_user import WmTicketUser
 from app.models.wm_ticket_comment import WmTicketComment
 from app.models.wm_ticket_history import WmTicketHistory
+from app.models.task_dependencies import TaskDependency
+from app.models.audit_logs_v2 import AuditLogV2
+from app.models.sla_tracking import SlaTracking
 __all__ = [
     "Department",
     "Employee",
@@ -160,4 +163,7 @@ __all__ = [
     "WmTicketComment",
     "WmTicketUser",
     "WmTicket",
+    "TaskDependency",
+    "AuditLogV2",
+    "SlaTracking",
 ]

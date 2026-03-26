@@ -1318,3 +1318,47 @@ CREATE TABLE wm_ticket_history (
     changed_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
 GO
+
+CREATE TABLE task_dependencies (
+    id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    task_id UNIQUEIDENTIFIER NOT NULL,
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    depends_on_user_id UNIQUEIDENTIFIER NOT NULL,
+    depends_on_task_id UNIQUEIDENTIFIER NULL,
+    dependency_type NVARCHAR(2) NOT NULL,
+    status NVARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT chk_task_dependencies_type CHECK (dependency_type IN ('FS','SS','FF')),
+    CONSTRAINT chk_task_dependencies_status CHECK (status IN ('PENDING','COMPLETED','APPROVED'))
+);
+GO
+
+CREATE TABLE audit_logs (
+    id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    entity_type NVARCHAR(60) NOT NULL,
+    entity_id UNIQUEIDENTIFIER NOT NULL,
+    action NVARCHAR(40) NOT NULL,
+    old_data NVARCHAR(MAX) NULL,
+    new_data NVARCHAR(MAX) NULL,
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    ip_address NVARCHAR(64) NULL,
+    attempt_status NVARCHAR(20) NOT NULL DEFAULT 'AUTHORIZED',
+    created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+CREATE TABLE sla_tracking (
+    id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    ticket_id UNIQUEIDENTIFIER NOT NULL,
+    priority NVARCHAR(10) NOT NULL,
+    start_time DATETIME2 NOT NULL,
+    deadline DATETIME2 NOT NULL,
+    status NVARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    escalation_level INT NOT NULL DEFAULT 0,
+    paused INT NOT NULL DEFAULT 0,
+    pause_reason NVARCHAR(50) NULL,
+    timezone NVARCHAR(40) NOT NULL DEFAULT 'UTC',
+    CONSTRAINT chk_sla_tracking_priority CHECK (priority IN ('HIGH','LOW','CUSTOM')),
+    CONSTRAINT chk_sla_tracking_status CHECK (status IN ('ACTIVE','BREACHED','COMPLETED'))
+);
+GO

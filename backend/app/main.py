@@ -21,11 +21,14 @@ from app.modules.master_sync.router import router as employee_sync_router
 from app.modules.reports.router import router as reports_router
 from app.modules.rules.router import router as rules_router
 from app.modules.sla.router import router as sla_router
+from app.modules.sla_enforcement.router import router as sla_enforcement_router
 from app.modules.platform.router import router as platform_router
 from app.modules.rbac.router import router as rbac_router
 from app.modules.tasks.router import router as tasks_router
+from app.modules.dependency_enforcement.router import router as dependency_enforcement_router
 from app.modules.timesheets.router import router as timesheets_router
 from app.modules.tickets.router import router as tickets_router
+from app.modules.tez_audit.router import router as tez_audit_router
 from app.modules.workflows.router import router as workflows_router
 
 Base.metadata.create_all(bind=engine)
@@ -62,8 +65,10 @@ app.include_router(ai_router, prefix="/api/v1")
 app.include_router(ai_forecasting_router, prefix="/api/v1")
 app.include_router(tasks_router, prefix="/api")
 app.include_router(crm_router, prefix="/api")
+app.include_router(dependency_enforcement_router, prefix="/api")
 app.include_router(tasks_router, prefix="/api/v1")
 app.include_router(crm_router, prefix="/api/v1")
+app.include_router(dependency_enforcement_router, prefix="/api/v1")
 app.include_router(timesheets_router, prefix="/api")
 app.include_router(timesheets_router, prefix="/api/v1")
 app.include_router(expense_claims_router, prefix="/api")
@@ -79,8 +84,10 @@ app.include_router(approval_router, prefix="/api")
 app.include_router(rules_router, prefix="/api")
 app.include_router(workflows_router, prefix="/api")
 app.include_router(sla_router, prefix="/api")
+app.include_router(sla_enforcement_router, prefix="/api")
 app.include_router(platform_router, prefix="/api")
 app.include_router(tickets_router, prefix="/api")
+app.include_router(tez_audit_router, prefix="/api")
 app.include_router(billing_router, prefix="/api/v1")
 app.include_router(reports_router, prefix="/api/v1")
 app.include_router(rbac_router, prefix="/api/v1")
@@ -88,5 +95,7 @@ app.include_router(approval_router, prefix="/api/v1")
 app.include_router(rules_router, prefix="/api/v1")
 app.include_router(workflows_router, prefix="/api/v1")
 app.include_router(sla_router, prefix="/api/v1")
+app.include_router(sla_enforcement_router, prefix="/api/v1")
 app.include_router(platform_router, prefix="/api/v1")
 app.include_router(tickets_router, prefix="/api/v1")
+app.include_router(tez_audit_router, prefix="/api/v1")

@@ -11,6 +11,8 @@ from app.modules.tasks.schemas import (
     ChildItemStatusRequest,
     ParticipantSubmitRequest,
     ParticipantSubmitResponse,
+    SubmissionDecisionRequest,
+    SubmissionDecisionResponse,
     TaskAssignBulkRequest,
     TaskAssignRequest,
     TaskAssignResponse,
@@ -101,5 +103,3 @@ def update_child_item_status(task_id: int, child_item_id: int, payload: ChildIte
 @router.post("/{task_id}/child-items/reorder", response_model=TaskAssignResponse)
 def reorder_child_items(task_id: int, payload: ChildItemReorderRequest, db: Session = Depends(get_db)):
     return TaskService(db).reorder_child_items(task_id=task_id, payload=payload)
-    SubmissionDecisionRequest,
-    SubmissionDecisionResponse,
