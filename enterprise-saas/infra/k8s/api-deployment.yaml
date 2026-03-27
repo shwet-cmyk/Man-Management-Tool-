@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: enterprise-api
+  template:
+    metadata:
+      labels:
+        app: enterprise-api
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/example/enterprise-api:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: enterprise-secrets
+                  key: database-url
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: enterprise-secrets
+                  key: redis-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enterprise-api
+spec:
+  selector:
+    app: enterprise-api
+  ports:
+    - port: 80
+      targetPort: 3000
