@@ -1,0 +1,8 @@
+{
+  "name": "enterprise-api",
+  "private": true,
+  "scripts": {
+    "start:dev": "node dist/main.js",
+    "test": "jest"
+  }
+}
