@@ -15,6 +15,7 @@ import WorkWorkspacePage from './modules/workspace/WorkWorkspacePage'
 import MyWorkPage from './modules/workspace/MyWorkPage'
 import ProjectCollabPage from './modules/workspace/ProjectCollabPage'
 import StrategicOpsPage from './modules/workspace/StrategicOpsPage'
+import ApiModulePage from './modules/workspace/ApiModulePage'
 import { seedWorkItems } from './modules/workspace/workData'
 
 const navSections = [
@@ -25,6 +26,7 @@ const navSections = [
       { path: '/my-work', label: 'My Work' },
       { path: '/projects/collaboration', label: 'Project Collaboration' },
       { path: '/strategic-ops', label: 'Strategic Ops' },
+      { path: '/api-module', label: 'API Module' },
       { path: '/dashboard', label: 'Analytics Dashboard' },
     ],
   },
@@ -55,6 +57,7 @@ const pageTitles = {
   '/dashboard': 'Dashboard',
   '/projects/collaboration': 'Project Collaboration',
   '/strategic-ops': 'Strategic Operations',
+  '/api-module': 'API Integration Console',
   '/departments': 'Departments',
   '/employees': 'Employees',
   '/attendance': 'Attendance',
@@ -166,6 +169,7 @@ function App() {
             />
             <Route path="/projects/collaboration" element={<ProjectCollabPage workItems={workItems} />} />
             <Route path="/strategic-ops" element={<StrategicOpsPage workItems={workItems} />} />
+            <Route path="/api-module" element={<ApiModulePage />} />
             <Route path="/dashboard" element={<HomePage />} />
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/employees" element={<EmployeesPage />} />

@@ -12,11 +12,11 @@ Use-case driven full-stack implementation for IESL man-management workflows.
   - `POST /api/permissions/tree/seed`
   - `GET /api/permissions/tree`
 - Swagger/OpenAPI:
-  - Swagger UI: `http://localhost:8000/docs`
-  - OpenAPI JSON: `http://localhost:8000/openapi.json`
-  - Export command: `curl http://localhost:8000/openapi.json -o backend/docs/openapi.json`
+  - Swagger UI: `http://localhost:8000/api-docs`
+  - OpenAPI JSON: `http://localhost:8000/api/v1/openapi.json`
+  - Export command: `curl http://localhost:8000/api/v1/openapi.json -o backend/docs/openapi.json`
 
-See `backend/docs/api_module_guide.md` for full details.
+See `backend/docs/api_module_guide.md`, `backend/docs/api_rbac_tree.md`, and `backend/docs/platform_endpoint_inventory_v1.md` for full details.
 
 ## UC-MST-005 Employee Master Sync
 - API: `/api/v1/sync/employees*`

@@ -918,3 +918,244 @@ button:disabled {
   border-radius: 4px;
   padding: 0 0.2rem;
 }
+
+/* API Integration Console */
+.api-module-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.api-subnav {
+  position: sticky;
+  top: var(--space-lg);
+}
+
+.api-subnav-list {
+  margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.api-subnav-btn {
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text);
+  padding: 0.48rem 0.55rem;
+}
+
+.api-subnav-btn-active {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.api-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.api-module-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.api-breadcrumb {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  margin-bottom: 0.25rem;
+}
+
+.api-toolbar-actions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.api-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.api-kpi-card p {
+  color: var(--text-muted);
+  font-size: 0.77rem;
+}
+
+.api-kpi-card strong {
+  font-size: 1.25rem;
+  margin-top: 0.4rem;
+  display: inline-block;
+}
+
+.api-widgets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.api-widget h3 {
+  font-size: 0.9rem;
+  margin-bottom: var(--space-xs);
+}
+
+.api-mini-chart {
+  margin-top: var(--space-sm);
+  height: 54px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #dbeafe, #e2e8f0);
+}
+
+.status-badge {
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.72rem;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+}
+
+.status-active,
+.status-success,
+.status-no {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.status-fail,
+.status-revoked,
+.status-suspended,
+.status-yes {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.warning-banner {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.scope-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: var(--space-sm);
+}
+
+.matrix-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
+  gap: var(--space-xs);
+  padding: 0.35rem 0.25rem;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.matrix-head {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.settings-grid label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.toggle-row {
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.docs-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--space-lg);
+}
+
+.docs-link {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.docs-snippet {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.65rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  overflow: auto;
+}
+
+.side-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: min(460px, 92vw);
+  height: 100vh;
+  background: #fff;
+  border-left: 1px solid var(--border);
+  box-shadow: -20px 0 35px rgba(15, 23, 42, 0.12);
+  padding: var(--space-lg);
+  z-index: 50;
+  overflow: auto;
+}
+
+.side-drawer header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.side-drawer pre {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.6rem;
+  font-size: 0.74rem;
+}
+
+.drawer-audit h4 {
+  font-size: 0.82rem;
+  margin-top: 0.7rem;
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 1200px) {
+  .api-module-layout,
+  .docs-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .api-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .api-widgets-grid {
+    grid-template-columns: 1fr;
+  }
+}

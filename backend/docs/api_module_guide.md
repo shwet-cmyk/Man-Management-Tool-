@@ -58,11 +58,16 @@ Tree shape (root modules and key action families):
 cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 Then open:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
-- OpenAPI JSON: `http://localhost:8000/openapi.json`
+- Swagger UI: `http://localhost:8000/api-docs`
+- ReDoc: `http://localhost:8000/api-redoc`
+- OpenAPI JSON: `http://localhost:8000/api/v1/openapi.json`
 
 ### Export OpenAPI JSON to file
 ```bash
-curl http://localhost:8000/openapi.json -o backend/docs/openapi.json
+curl http://localhost:8000/api/v1/openapi.json -o backend/docs/openapi.json
 ```
+
+
+Related references:
+- `backend/docs/platform_endpoint_inventory_v1.md`
+- `backend/docs/api_rbac_tree.md`

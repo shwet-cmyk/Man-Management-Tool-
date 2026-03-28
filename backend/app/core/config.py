@@ -5,6 +5,12 @@ class Settings(BaseSettings):
     app_name: str = "IESL Man Management API"
     app_env: str = "development"
 
+    docs_enabled: bool = True
+    docs_url: str = "/api-docs"
+    redoc_url: str = "/api-redoc"
+    openapi_url: str = "/api/v1/openapi.json"
+    api_key_header_name: str = "x-api-key"
+
     db_server: str = "localhost"
     db_port: int = 1433
     db_name: str = "IESLManManagement"

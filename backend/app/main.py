@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 
 from app.core.config import settings
 from app.database.session import Base, engine
@@ -40,7 +41,69 @@ from app.modules.strategic_ops.router import router as strategic_ops_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title=settings.app_name)
+app = FastAPI(
+    title=settings.app_name,
+    version="v1",
+    docs_url=settings.docs_url if settings.docs_enabled else None,
+    redoc_url=settings.redoc_url if settings.docs_enabled else None,
+    openapi_url=settings.openapi_url if settings.docs_enabled else None,
+)
+
+
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    schema = get_openapi(
+        title=settings.app_name,
+        version="v1",
+        description="IESL internal enterprise platform APIs.",
+        routes=app.routes,
+        tags=[
+            {"name": "API Admin", "description": "API applications, keys, scopes, endpoint registry, webhooks, logs and settings."},
+            {"name": "Users & Roles", "description": "RBAC and access management."},
+            {"name": "Masters", "description": "Master data management modules."},
+            {"name": "Tasks"},
+            {"name": "Jobs"},
+            {"name": "Tickets"},
+            {"name": "Timesheets"},
+            {"name": "Projects"},
+            {"name": "Approvals"},
+            {"name": "Dashboards"},
+            {"name": "Reports"},
+        ],
+    )
+
+    schema["servers"] = [
+        {"url": "/api/v1", "description": "Versioned v1 base path"},
+        {"url": "/api", "description": "Compatibility base path"},
+    ]
+
+    components = schema.setdefault("components", {})
+    components.setdefault("securitySchemes", {})["ApiKeyAuth"] = {
+        "type": "apiKey",
+        "in": "header",
+        "name": settings.api_key_header_name,
+        "description": "Internal API key header for API module and integration endpoints.",
+    }
+    components.setdefault("schemas", {})["StandardError"] = {
+        "title": "StandardError",
+        "type": "object",
+        "properties": {
+            "detail": {"type": "string"},
+            "code": {"type": "string"},
+            "trace_id": {"type": "string"},
+        },
+    }
+
+    schema.setdefault("security", []).append({"ApiKeyAuth": []})
+
+    app.openapi_schema = schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
 
 app.add_middleware(
     CORSMiddleware,
