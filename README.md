@@ -2,6 +2,22 @@
 
 Use-case driven full-stack implementation for IESL man-management workflows.
 
+## API Module Quick Commands
+- UI/UX (frontend): `cd frontend && npm install && npm run dev`
+- Backend API server: `cd backend && pip install -r requirements.txt && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+- Endpoint inventory by module:
+  - `python backend/scripts/api_module_inventory.py --format markdown > backend/docs/api_module_inventory.md`
+  - `python backend/scripts/api_module_inventory.py --format json > backend/docs/api_module_inventory.json`
+- RBAC tree APIs:
+  - `POST /api/permissions/tree/seed`
+  - `GET /api/permissions/tree`
+- Swagger/OpenAPI:
+  - Swagger UI: `http://localhost:8000/docs`
+  - OpenAPI JSON: `http://localhost:8000/openapi.json`
+  - Export command: `curl http://localhost:8000/openapi.json -o backend/docs/openapi.json`
+
+See `backend/docs/api_module_guide.md` for full details.
+
 ## UC-MST-005 Employee Master Sync
 - API: `/api/v1/sync/employees*`
 - Tables: `ref_employee`, `sync_log`

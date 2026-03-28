@@ -1,0 +1,2590 @@
+{
+  "ai": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/ai/apply",
+      "handler": "apply_recommendation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/ai/insights",
+      "handler": "generate_insight"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/ai/task/{task_id}",
+      "handler": "get_task_insight"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/ai/apply",
+      "handler": "apply_recommendation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/ai/insights",
+      "handler": "generate_insight"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/ai/task/{task_id}",
+      "handler": "get_task_insight"
+    }
+  ],
+  "ai_forecasting": [
+    {
+      "method": "GET",
+      "path": "/api/ai/customer/{customer_id}/prediction",
+      "handler": "get_customer_prediction"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai/forecast",
+      "handler": "get_forecast"
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/sales-history",
+      "handler": "ingest_sales"
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/targets/generate",
+      "handler": "generate_targets"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/customer/{customer_id}/prediction",
+      "handler": "get_customer_prediction"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/forecast",
+      "handler": "get_forecast"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/sales-history",
+      "handler": "ingest_sales"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/targets/generate",
+      "handler": "generate_targets"
+    }
+  ],
+  "analytics": [
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/analytics/dashboard",
+      "handler": "analytics_dashboard"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/analytics/exceptions",
+      "handler": "get_exceptions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics/exceptions/refresh",
+      "handler": "refresh_exceptions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/analytics/profitability",
+      "handler": "get_profitability"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics/query",
+      "handler": "query_analytics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics/report",
+      "handler": "generate_report"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/analytics/dashboard",
+      "handler": "analytics_dashboard"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/analytics/exceptions",
+      "handler": "get_exceptions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics/exceptions/refresh",
+      "handler": "refresh_exceptions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/analytics/profitability",
+      "handler": "get_profitability"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics/query",
+      "handler": "query_analytics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics/report",
+      "handler": "generate_report"
+    }
+  ],
+  "analytics_framework": [
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/analytics-framework/catalog",
+      "handler": "catalog"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/comparison",
+      "handler": "comparison"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/drilldown",
+      "handler": "drilldown"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/leaderboard",
+      "handler": "leaderboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/matrix",
+      "handler": "matrix"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/summary-cards",
+      "handler": "summary_cards"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/trend",
+      "handler": "trend_dataset"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/analytics-framework/widget-dataset",
+      "handler": "widget_dataset"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/analytics-framework/catalog",
+      "handler": "catalog"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/comparison",
+      "handler": "comparison"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/drilldown",
+      "handler": "drilldown"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/leaderboard",
+      "handler": "leaderboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/matrix",
+      "handler": "matrix"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/summary-cards",
+      "handler": "summary_cards"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/trend",
+      "handler": "trend_dataset"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/analytics-framework/widget-dataset",
+      "handler": "widget_dataset"
+    }
+  ],
+  "approval": [
+    {
+      "method": "POST",
+      "path": "/api/approval/action",
+      "handler": "take_action"
+    },
+    {
+      "method": "GET",
+      "path": "/api/approval/status/{entity_id}",
+      "handler": "get_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/approval/submit",
+      "handler": "submit_for_approval"
+    },
+    {
+      "method": "POST",
+      "path": "/api/approval/workflows",
+      "handler": "create_workflow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/approval/action",
+      "handler": "take_action"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/approval/status/{entity_id}",
+      "handler": "get_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/approval/submit",
+      "handler": "submit_for_approval"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/approval/workflows",
+      "handler": "create_workflow"
+    }
+  ],
+  "attendance": [
+    {
+      "method": "GET",
+      "path": "/api/v1/attendance",
+      "handler": "get_attendance"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/attendance",
+      "handler": "add_attendance"
+    }
+  ],
+  "audit": [
+    {
+      "method": "POST",
+      "path": "/api/audit/log",
+      "handler": "log_audit"
+    },
+    {
+      "method": "GET",
+      "path": "/api/audit/version/{entity_type}/{entity_id}/{version_no}",
+      "handler": "get_version"
+    },
+    {
+      "method": "GET",
+      "path": "/api/audit/{audit_log_id}/changes",
+      "handler": "get_field_changes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/audit/{entity_type}/{entity_id}",
+      "handler": "get_audit_logs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/audit/log",
+      "handler": "log_audit"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/audit/version/{entity_type}/{entity_id}/{version_no}",
+      "handler": "get_version"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/audit/{audit_log_id}/changes",
+      "handler": "get_field_changes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/audit/{entity_type}/{entity_id}",
+      "handler": "get_audit_logs"
+    }
+  ],
+  "billing": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/billing/configure",
+      "handler": "configure_billing"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/billing/invoice",
+      "handler": "create_or_link_invoice"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/billing/mark-ready",
+      "handler": "mark_ready_for_billing"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/billing/proforma",
+      "handler": "create_or_link_proforma"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/billing/remove-ready",
+      "handler": "remove_readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/billing/configure",
+      "handler": "configure_billing"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/billing/invoice",
+      "handler": "create_or_link_invoice"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/billing/mark-ready",
+      "handler": "mark_ready_for_billing"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/billing/proforma",
+      "handler": "create_or_link_proforma"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/billing/remove-ready",
+      "handler": "remove_readiness"
+    }
+  ],
+  "crm": [
+    {
+      "method": "POST",
+      "path": "/api/crm/customer/lifecycle",
+      "handler": "upsert_lifecycle"
+    },
+    {
+      "method": "POST",
+      "path": "/api/crm/deal",
+      "handler": "create_deal"
+    },
+    {
+      "method": "POST",
+      "path": "/api/crm/deal/{deal_id}/invoice",
+      "handler": "deal_to_invoice"
+    },
+    {
+      "method": "POST",
+      "path": "/api/crm/followup",
+      "handler": "create_followup"
+    },
+    {
+      "method": "GET",
+      "path": "/api/crm/followup/due",
+      "handler": "due_followups"
+    },
+    {
+      "method": "POST",
+      "path": "/api/crm/lead",
+      "handler": "create_lead"
+    },
+    {
+      "method": "POST",
+      "path": "/api/crm/lead/{lead_id}/convert",
+      "handler": "convert_lead"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crm/customer/lifecycle",
+      "handler": "upsert_lifecycle"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crm/deal",
+      "handler": "create_deal"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crm/deal/{deal_id}/invoice",
+      "handler": "deal_to_invoice"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crm/followup",
+      "handler": "create_followup"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/crm/followup/due",
+      "handler": "due_followups"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crm/lead",
+      "handler": "create_lead"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/crm/lead/{lead_id}/convert",
+      "handler": "convert_lead"
+    }
+  ],
+  "dashboard": [
+    {
+      "method": "POST",
+      "path": "/api/dashboard",
+      "handler": "create_dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/dashboard/widget",
+      "handler": "add_widget"
+    },
+    {
+      "method": "POST",
+      "path": "/api/dashboard/widget/data",
+      "handler": "get_widget_data"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dashboard/{dashboard_id}",
+      "handler": "get_dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dashboard",
+      "handler": "create_dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dashboard/widget",
+      "handler": "add_widget"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/dashboard/widget/data",
+      "handler": "get_widget_data"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/dashboard/{dashboard_id}",
+      "handler": "get_dashboard"
+    }
+  ],
+  "departments": [
+    {
+      "method": "GET",
+      "path": "/api/v1/departments",
+      "handler": "get_departments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/departments",
+      "handler": "add_department"
+    }
+  ],
+  "dependency_enforcement": [
+    {
+      "method": "POST",
+      "path": "/api/tasks/check-dependency",
+      "handler": "check_dependency"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/dependencies",
+      "handler": "create_dependency"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/dependency-action",
+      "handler": "dependency_action"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/check-dependency",
+      "handler": "check_dependency"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/dependencies",
+      "handler": "create_dependency"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/dependency-action",
+      "handler": "dependency_action"
+    }
+  ],
+  "documents": [
+    {
+      "method": "POST",
+      "path": "/api/documents/carry-forward",
+      "handler": "carry_forward"
+    },
+    {
+      "method": "POST",
+      "path": "/api/documents/link",
+      "handler": "link_document"
+    },
+    {
+      "method": "POST",
+      "path": "/api/documents/upload",
+      "handler": "upload_document"
+    },
+    {
+      "method": "POST",
+      "path": "/api/documents/version",
+      "handler": "create_version"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/documents/{document_id}/{entity_type}/{entity_id}",
+      "handler": "unlink_document"
+    },
+    {
+      "method": "GET",
+      "path": "/api/documents/{entity_type}/{entity_id}",
+      "handler": "get_documents"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents/carry-forward",
+      "handler": "carry_forward"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents/link",
+      "handler": "link_document"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents/upload",
+      "handler": "upload_document"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents/version",
+      "handler": "create_version"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/documents/{document_id}/{entity_type}/{entity_id}",
+      "handler": "unlink_document"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/documents/{entity_type}/{entity_id}",
+      "handler": "get_documents"
+    }
+  ],
+  "employees": [
+    {
+      "method": "GET",
+      "path": "/api/v1/employees",
+      "handler": "get_employees"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/employees",
+      "handler": "add_employee"
+    }
+  ],
+  "expense_claims": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/expense-claims",
+      "handler": "create_expense_claim"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/expense-claims/{claim_id}/convert-to-voucher",
+      "handler": "convert_to_voucher"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/expense-claims/{claim_id}/decision",
+      "handler": "decide_expense_claim"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/expense-claims/{claim_id}/submit",
+      "handler": "submit_expense_claim"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/expense-claims",
+      "handler": "create_expense_claim"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/expense-claims/{claim_id}/convert-to-voucher",
+      "handler": "convert_to_voucher"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/expense-claims/{claim_id}/decision",
+      "handler": "decide_expense_claim"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/expense-claims/{claim_id}/submit",
+      "handler": "submit_expense_claim"
+    }
+  ],
+  "integration_hub": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/integrations/api-keys",
+      "handler": "create_api_key"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/integrations/expenses",
+      "handler": "push_expense"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/integrations/finance/transactions",
+      "handler": "push_transaction"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/integrations/jobs/{job_id}",
+      "handler": "fetch_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/integrations/task",
+      "handler": "create_task"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/wm/integrations/task/{task_id}",
+      "handler": "update_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/integrations/timesheets",
+      "handler": "push_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/integrations/webhooks",
+      "handler": "register_webhook"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/integrations/api-keys",
+      "handler": "create_api_key"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/integrations/expenses",
+      "handler": "push_expense"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/integrations/finance/transactions",
+      "handler": "push_transaction"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/integrations/jobs/{job_id}",
+      "handler": "fetch_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/integrations/task",
+      "handler": "create_task"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/wm/integrations/task/{task_id}",
+      "handler": "update_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/integrations/timesheets",
+      "handler": "push_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/integrations/webhooks",
+      "handler": "register_webhook"
+    }
+  ],
+  "jobs": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/jobs",
+      "handler": "create_job"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/jobs/dashboard-metrics",
+      "handler": "dashboard_metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/jobs/governance-config",
+      "handler": "configure"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/jobs/reports/registers",
+      "handler": "report_registers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/jobs/task-shell",
+      "handler": "create_task_shell"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/jobs/{job_id}/status",
+      "handler": "transition_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/jobs/{job_id}/transfer-decision",
+      "handler": "transfer_decision"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/jobs",
+      "handler": "create_job"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/jobs/dashboard-metrics",
+      "handler": "dashboard_metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/jobs/governance-config",
+      "handler": "configure"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/jobs/reports/registers",
+      "handler": "report_registers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/jobs/task-shell",
+      "handler": "create_task_shell"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/jobs/{job_id}/status",
+      "handler": "transition_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/jobs/{job_id}/transfer-decision",
+      "handler": "transfer_decision"
+    }
+  ],
+  "man_management": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/approvals/action",
+      "handler": "approval_action"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/dashboard",
+      "handler": "dashboard"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/employee-groups",
+      "handler": "list_employee_groups"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/employee-groups",
+      "handler": "create_employee_group"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/holidays",
+      "handler": "list_holidays"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/holidays",
+      "handler": "create_holiday"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/job-task-lines",
+      "handler": "add_job_task_line"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/job-task-lines/{job_task_id}/status",
+      "handler": "update_job_task_status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/jobs",
+      "handler": "job_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/jobs",
+      "handler": "create_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/jobs/billing",
+      "handler": "mark_billed"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/wm/man-management/jobs/{job_id}",
+      "handler": "delete_job"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/jobs/{job_id}",
+      "handler": "view_job"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/wm/man-management/jobs/{job_id}",
+      "handler": "edit_job"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/jobs/{job_id}/billing-readiness",
+      "handler": "billing_readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/jobs/{job_id}/copy",
+      "handler": "copy_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/settings",
+      "handler": "upsert_settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/man-management/timesheets",
+      "handler": "timesheet_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/man-management/timesheets",
+      "handler": "add_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/approvals/action",
+      "handler": "approval_action"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/dashboard",
+      "handler": "dashboard"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/employee-groups",
+      "handler": "list_employee_groups"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/employee-groups",
+      "handler": "create_employee_group"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/holidays",
+      "handler": "list_holidays"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/holidays",
+      "handler": "create_holiday"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/job-task-lines",
+      "handler": "add_job_task_line"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/job-task-lines/{job_task_id}/status",
+      "handler": "update_job_task_status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/jobs",
+      "handler": "job_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/jobs",
+      "handler": "create_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/jobs/billing",
+      "handler": "mark_billed"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/wm/man-management/jobs/{job_id}",
+      "handler": "delete_job"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/jobs/{job_id}",
+      "handler": "view_job"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/wm/man-management/jobs/{job_id}",
+      "handler": "edit_job"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/jobs/{job_id}/billing-readiness",
+      "handler": "billing_readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/jobs/{job_id}/copy",
+      "handler": "copy_job"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/settings",
+      "handler": "upsert_settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/man-management/timesheets",
+      "handler": "timesheet_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/man-management/timesheets",
+      "handler": "add_timesheet"
+    }
+  ],
+  "master_sync": [
+    {
+      "method": "POST",
+      "path": "/api/v1/sync/employees",
+      "handler": "sync_employees"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sync/employees/cache",
+      "handler": "employee_cache"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sync/employees/logs",
+      "handler": "employee_sync_logs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sync/employees/summary",
+      "handler": "employee_sync_summary"
+    }
+  ],
+  "performance_engine": [
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/calendar/drilldown",
+      "handler": "calendar_drilldown"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/calendar/employee/day",
+      "handler": "employee_calendar_day"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/calendar/employee/month",
+      "handler": "employee_calendar_month"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/calendar/employee/week",
+      "handler": "employee_calendar_week"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/calendar/team-summary",
+      "handler": "team_calendar_summary"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/capacity",
+      "handler": "employee_capacity"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/employee-scorecard",
+      "handler": "employee_scorecard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/reports/capacity",
+      "handler": "capacity_report"
+    },
+    {
+      "method": "GET",
+      "path": "/api/performance-engine/reports/points-ledger",
+      "handler": "points_ledger"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/score-task",
+      "handler": "score_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance-engine/widgets/calendar-capacity",
+      "handler": "calendar_capacity_widget"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/calendar/drilldown",
+      "handler": "calendar_drilldown"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/calendar/employee/day",
+      "handler": "employee_calendar_day"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/calendar/employee/month",
+      "handler": "employee_calendar_month"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/calendar/employee/week",
+      "handler": "employee_calendar_week"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/calendar/team-summary",
+      "handler": "team_calendar_summary"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/capacity",
+      "handler": "employee_capacity"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/employee-scorecard",
+      "handler": "employee_scorecard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/reports/capacity",
+      "handler": "capacity_report"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/performance-engine/reports/points-ledger",
+      "handler": "points_ledger"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/score-task",
+      "handler": "score_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/performance-engine/widgets/calendar-capacity",
+      "handler": "calendar_capacity_widget"
+    }
+  ],
+  "platform": [
+    {
+      "method": "GET",
+      "path": "/api/sla/status",
+      "handler": "sla_status_alias"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sla/status",
+      "handler": "sla_status_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/widget",
+      "handler": "create_widget_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflow",
+      "handler": "create_workflow_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflow/execute",
+      "handler": "execute_workflow_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/widget",
+      "handler": "create_widget_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow",
+      "handler": "create_workflow_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/execute",
+      "handler": "execute_workflow_alias"
+    }
+  ],
+  "project_collab": [
+    {
+      "method": "POST",
+      "path": "/api/project-collab/access/resolve",
+      "handler": "resolve_access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/chat/message",
+      "handler": "post_message"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/chat/{message_id}/pin",
+      "handler": "pin_message"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/chat/{project_id}",
+      "handler": "list_messages"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/file",
+      "handler": "add_file"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/file/{project_id}",
+      "handler": "list_files"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/project",
+      "handler": "create_project"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/project/list",
+      "handler": "list_projects"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/project/{project_id}",
+      "handler": "get_project"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/project/{project_id}/overview",
+      "handler": "overview"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/project/{project_id}/status",
+      "handler": "update_status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/project/{project_id}/team",
+      "handler": "list_team"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/project/{project_id}/team",
+      "handler": "add_member"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/project/{project_id}/views",
+      "handler": "multi_views"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/reports",
+      "handler": "reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/scenarios/seed",
+      "handler": "seed_scenarios"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/project-collab/team-member/{project_team_member_id}",
+      "handler": "update_member"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/watch/follow",
+      "handler": "follow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/project-collab/watch/{watcher_id}/unfollow",
+      "handler": "unfollow"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-collab/widgets",
+      "handler": "widgets"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/access/resolve",
+      "handler": "resolve_access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/chat/message",
+      "handler": "post_message"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/chat/{message_id}/pin",
+      "handler": "pin_message"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/chat/{project_id}",
+      "handler": "list_messages"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/file",
+      "handler": "add_file"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/file/{project_id}",
+      "handler": "list_files"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/project",
+      "handler": "create_project"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/project/list",
+      "handler": "list_projects"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/project/{project_id}",
+      "handler": "get_project"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/project/{project_id}/overview",
+      "handler": "overview"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/project/{project_id}/status",
+      "handler": "update_status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/project/{project_id}/team",
+      "handler": "list_team"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/project/{project_id}/team",
+      "handler": "add_member"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/project/{project_id}/views",
+      "handler": "multi_views"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/reports",
+      "handler": "reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/scenarios/seed",
+      "handler": "seed_scenarios"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/project-collab/team-member/{project_team_member_id}",
+      "handler": "update_member"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/watch/follow",
+      "handler": "follow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-collab/watch/{watcher_id}/unfollow",
+      "handler": "unfollow"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-collab/widgets",
+      "handler": "widgets"
+    }
+  ],
+  "rbac": [
+    {
+      "method": "POST",
+      "path": "/api/access/check",
+      "handler": "check_access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/access/effective",
+      "handler": "effective_access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/approvals/check",
+      "handler": "check_approval_limit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/check-permission",
+      "handler": "check_access_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/overrides",
+      "handler": "add_override"
+    },
+    {
+      "method": "GET",
+      "path": "/api/permissions/tree",
+      "handler": "permission_tree"
+    },
+    {
+      "method": "POST",
+      "path": "/api/permissions/tree/seed",
+      "handler": "seed_permission_tree"
+    },
+    {
+      "method": "POST",
+      "path": "/api/permissions/{permission_id}/scope",
+      "handler": "assign_scope"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports",
+      "handler": "rbac_reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/role-inheritance",
+      "handler": "add_role_inheritance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/roles",
+      "handler": "list_roles"
+    },
+    {
+      "method": "POST",
+      "path": "/api/roles",
+      "handler": "create_role"
+    },
+    {
+      "method": "POST",
+      "path": "/api/roles/seed-templates",
+      "handler": "seed_role_templates"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/roles/{role_id}",
+      "handler": "delete_role"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/roles/{role_id}",
+      "handler": "update_role"
+    },
+    {
+      "method": "GET",
+      "path": "/api/roles/{role_id}/permissions",
+      "handler": "list_role_permissions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/roles/{role_id}/permissions",
+      "handler": "assign_permission"
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/roles",
+      "handler": "assign_role_alias"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/users/{user_id}/access-profile",
+      "handler": "upsert_access_profile"
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/{user_id}/approval-limit",
+      "handler": "upsert_approval_limit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/{user_id}/assign-role",
+      "handler": "assign_role"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/{user_id}/permissions",
+      "handler": "list_user_permissions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/{user_id}/scopes",
+      "handler": "get_user_scope"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/users/{user_id}/scopes",
+      "handler": "set_user_scope"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/access/check",
+      "handler": "check_access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/access/effective",
+      "handler": "effective_access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/approvals/check",
+      "handler": "check_approval_limit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/check-permission",
+      "handler": "check_access_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/overrides",
+      "handler": "add_override"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/permissions/tree",
+      "handler": "permission_tree"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/permissions/tree/seed",
+      "handler": "seed_permission_tree"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/permissions/{permission_id}/scope",
+      "handler": "assign_scope"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports",
+      "handler": "rbac_reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/role-inheritance",
+      "handler": "add_role_inheritance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/roles",
+      "handler": "list_roles"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/roles",
+      "handler": "create_role"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/roles/seed-templates",
+      "handler": "seed_role_templates"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/roles/{role_id}",
+      "handler": "delete_role"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/roles/{role_id}",
+      "handler": "update_role"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/roles/{role_id}/permissions",
+      "handler": "list_role_permissions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/roles/{role_id}/permissions",
+      "handler": "assign_permission"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/users/roles",
+      "handler": "assign_role_alias"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/users/{user_id}/access-profile",
+      "handler": "upsert_access_profile"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/users/{user_id}/approval-limit",
+      "handler": "upsert_approval_limit"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/users/{user_id}/assign-role",
+      "handler": "assign_role"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/{user_id}/permissions",
+      "handler": "list_user_permissions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/{user_id}/scopes",
+      "handler": "get_user_scope"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/users/{user_id}/scopes",
+      "handler": "set_user_scope"
+    }
+  ],
+  "reports": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/reports",
+      "handler": "create_report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/reports/config",
+      "handler": "save_report_config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/reports/export",
+      "handler": "export_report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/reports/run",
+      "handler": "run_report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/reports/schedule",
+      "handler": "create_schedule"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/reports/schedule/run-due",
+      "handler": "run_due_schedules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/reports/standard/client-profitability",
+      "handler": "client_profitability"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/reports/standard/employee-productivity",
+      "handler": "employee_productivity"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/reports/standard/exceptions",
+      "handler": "exception_report"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/reports/standard/job-profitability",
+      "handler": "job_profitability"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/reports/standard/overrun-analysis",
+      "handler": "overrun_analysis"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/reports/standard/unbilled-work",
+      "handler": "unbilled_work"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/reports",
+      "handler": "create_report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/reports/config",
+      "handler": "save_report_config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/reports/export",
+      "handler": "export_report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/reports/run",
+      "handler": "run_report"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/reports/schedule",
+      "handler": "create_schedule"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/reports/schedule/run-due",
+      "handler": "run_due_schedules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/reports/standard/client-profitability",
+      "handler": "client_profitability"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/reports/standard/employee-productivity",
+      "handler": "employee_productivity"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/reports/standard/exceptions",
+      "handler": "exception_report"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/reports/standard/job-profitability",
+      "handler": "job_profitability"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/reports/standard/overrun-analysis",
+      "handler": "overrun_analysis"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/reports/standard/unbilled-work",
+      "handler": "unbilled_work"
+    }
+  ],
+  "rules": [
+    {
+      "method": "POST",
+      "path": "/api/rule",
+      "handler": "create_rule"
+    },
+    {
+      "method": "GET",
+      "path": "/api/rule/evaluate",
+      "handler": "evaluate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rule",
+      "handler": "create_rule"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rule/evaluate",
+      "handler": "evaluate"
+    }
+  ],
+  "sla": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/check",
+      "handler": "check_breaches"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/escalate",
+      "handler": "escalate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/holiday",
+      "handler": "add_holiday"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/pause",
+      "handler": "pause"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/resume",
+      "handler": "resume"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/rule",
+      "handler": "create_rule"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/sla/start",
+      "handler": "start_sla"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/sla/status/{entity_type}/{entity_id}",
+      "handler": "get_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/check",
+      "handler": "check_breaches"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/escalate",
+      "handler": "escalate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/holiday",
+      "handler": "add_holiday"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/pause",
+      "handler": "pause"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/resume",
+      "handler": "resume"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/rule",
+      "handler": "create_rule"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/sla/start",
+      "handler": "start_sla"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/sla/status/{entity_type}/{entity_id}",
+      "handler": "get_status"
+    }
+  ],
+  "sla_enforcement": [
+    {
+      "method": "POST",
+      "path": "/api/sla/enforcement/monitor",
+      "handler": "monitor"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sla/enforcement/pause-resume",
+      "handler": "pause_resume"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sla/enforcement/start",
+      "handler": "start"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sla/enforcement/{sla_id}",
+      "handler": "get_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sla/enforcement/monitor",
+      "handler": "monitor"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sla/enforcement/pause-resume",
+      "handler": "pause_resume"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sla/enforcement/start",
+      "handler": "start"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sla/enforcement/{sla_id}",
+      "handler": "get_status"
+    }
+  ],
+  "strategic_ops": [
+    {
+      "method": "GET",
+      "path": "/api/strategic-ops/goals",
+      "handler": "list_goals"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/goals",
+      "handler": "create_goal"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/goals/{goal_id}/link",
+      "handler": "link_goal"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/goals/{goal_id}/progress",
+      "handler": "update_goal_progress"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/goals/{goal_id}/rollup",
+      "handler": "rollup_goal"
+    },
+    {
+      "method": "GET",
+      "path": "/api/strategic-ops/intake",
+      "handler": "intake_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/intake",
+      "handler": "submit_intake"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/intake/{intake_id}/convert",
+      "handler": "intake_convert"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/intake/{intake_id}/status",
+      "handler": "intake_status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/strategic-ops/launch",
+      "handler": "launch_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/launch",
+      "handler": "create_launch"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/launch/{launch_id}/milestone",
+      "handler": "add_milestone"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/launch/{launch_id}/readiness",
+      "handler": "launch_readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/launch/{launch_id}/status",
+      "handler": "launch_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/reports",
+      "handler": "strategic_reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/resource/allocation",
+      "handler": "allocate_resource"
+    },
+    {
+      "method": "POST",
+      "path": "/api/strategic-ops/resource/views",
+      "handler": "resource_views"
+    },
+    {
+      "method": "GET",
+      "path": "/api/strategic-ops/widgets",
+      "handler": "strategic_widgets"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/strategic-ops/goals",
+      "handler": "list_goals"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/goals",
+      "handler": "create_goal"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/goals/{goal_id}/link",
+      "handler": "link_goal"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/goals/{goal_id}/progress",
+      "handler": "update_goal_progress"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/goals/{goal_id}/rollup",
+      "handler": "rollup_goal"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/strategic-ops/intake",
+      "handler": "intake_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/intake",
+      "handler": "submit_intake"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/intake/{intake_id}/convert",
+      "handler": "intake_convert"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/intake/{intake_id}/status",
+      "handler": "intake_status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/strategic-ops/launch",
+      "handler": "launch_register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/launch",
+      "handler": "create_launch"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/launch/{launch_id}/milestone",
+      "handler": "add_milestone"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/launch/{launch_id}/readiness",
+      "handler": "launch_readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/launch/{launch_id}/status",
+      "handler": "launch_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/reports",
+      "handler": "strategic_reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/resource/allocation",
+      "handler": "allocate_resource"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/strategic-ops/resource/views",
+      "handler": "resource_views"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/strategic-ops/widgets",
+      "handler": "strategic_widgets"
+    }
+  ],
+  "tasks": [
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/tasks",
+      "handler": "get_tasks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks",
+      "handler": "create_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/assign/bulk",
+      "handler": "bulk_assign"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/status-transition/bulk",
+      "handler": "bulk_status_transition"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/assign",
+      "handler": "assign_users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/tasks/{task_id}/child-items",
+      "handler": "get_child_items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/child-items",
+      "handler": "create_child_item"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/child-items/bulk",
+      "handler": "bulk_create_child_items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/child-items/reorder",
+      "handler": "reorder_child_items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/child-items/{child_item_id}/convert-to-subtask",
+      "handler": "convert_child_item"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/child-items/{child_item_id}/status",
+      "handler": "update_child_item_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/participants",
+      "handler": "configure_participants"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/participants/{participant_id}/submit",
+      "handler": "submit_participant_work"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/status-transition",
+      "handler": "status_transition"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tasks/{task_id}/submissions/{submission_id}/decision",
+      "handler": "decide_submission"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/tasks",
+      "handler": "get_tasks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks",
+      "handler": "create_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/assign/bulk",
+      "handler": "bulk_assign"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/status-transition/bulk",
+      "handler": "bulk_status_transition"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/assign",
+      "handler": "assign_users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/tasks/{task_id}/child-items",
+      "handler": "get_child_items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/child-items",
+      "handler": "create_child_item"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/child-items/bulk",
+      "handler": "bulk_create_child_items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/child-items/reorder",
+      "handler": "reorder_child_items"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/child-items/{child_item_id}/convert-to-subtask",
+      "handler": "convert_child_item"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/child-items/{child_item_id}/status",
+      "handler": "update_child_item_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/participants",
+      "handler": "configure_participants"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/participants/{participant_id}/submit",
+      "handler": "submit_participant_work"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/status-transition",
+      "handler": "status_transition"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tasks/{task_id}/submissions/{submission_id}/decision",
+      "handler": "decide_submission"
+    }
+  ],
+  "tez_audit": [
+    {
+      "method": "POST",
+      "path": "/api/audit/log",
+      "handler": "log_audit"
+    },
+    {
+      "method": "GET",
+      "path": "/api/audit/{entity_type}/{entity_id}",
+      "handler": "get_audit_logs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/audit/{entity_type}/{entity_id}/soft-delete/{user_id}",
+      "handler": "soft_delete"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/audit/log",
+      "handler": "log_audit"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/audit/{entity_type}/{entity_id}",
+      "handler": "get_audit_logs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/audit/{entity_type}/{entity_id}/soft-delete/{user_id}",
+      "handler": "soft_delete"
+    }
+  ],
+  "ticket_integration": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/ticket-integration/config",
+      "handler": "configure"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/ticket-integration/dashboard",
+      "handler": "dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/ticket-integration/sync",
+      "handler": "sync_tickets"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/ticket-integration/tasks/from-ticket",
+      "handler": "create_task_from_ticket"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/ticket-integration/config",
+      "handler": "configure"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/ticket-integration/dashboard",
+      "handler": "dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/ticket-integration/sync",
+      "handler": "sync_tickets"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/ticket-integration/tasks/from-ticket",
+      "handler": "create_task_from_ticket"
+    }
+  ],
+  "tickets": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets",
+      "handler": "create_ticket"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/dashboard",
+      "handler": "dashboard_metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/escalation/daily-digest",
+      "handler": "daily_digest"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/rollovers",
+      "handler": "register_rollover"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/wm/tickets/{ticket_id}",
+      "handler": "update_ticket"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/{ticket_id}/assign",
+      "handler": "assign_users"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/{ticket_id}/comments",
+      "handler": "add_comment"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/{ticket_id}/convert-to-task",
+      "handler": "convert_to_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/{ticket_id}/followups",
+      "handler": "add_followup"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/tickets/{ticket_id}/pause",
+      "handler": "pause_or_resume"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wm/tickets/{ticket_id}/timeline",
+      "handler": "get_timeline"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets",
+      "handler": "create_ticket"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/dashboard",
+      "handler": "dashboard_metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/escalation/daily-digest",
+      "handler": "daily_digest"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/rollovers",
+      "handler": "register_rollover"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/wm/tickets/{ticket_id}",
+      "handler": "update_ticket"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/{ticket_id}/assign",
+      "handler": "assign_users"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/{ticket_id}/comments",
+      "handler": "add_comment"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/{ticket_id}/convert-to-task",
+      "handler": "convert_to_task"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/{ticket_id}/followups",
+      "handler": "add_followup"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/tickets/{ticket_id}/pause",
+      "handler": "pause_or_resume"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wm/tickets/{ticket_id}/timeline",
+      "handler": "get_timeline"
+    }
+  ],
+  "timesheets": [
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/timesheets",
+      "handler": "create_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/timesheets/{timesheet_id}/decision",
+      "handler": "decide_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wm/timesheets/{timesheet_id}/submit",
+      "handler": "submit_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/timesheets",
+      "handler": "create_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/timesheets/{timesheet_id}/decision",
+      "handler": "decide_timesheet"
+    },
+    {
+      "method": "POST",
+      "path": "/api/wm/timesheets/{timesheet_id}/submit",
+      "handler": "submit_timesheet"
+    }
+  ],
+  "workflows": [
+    {
+      "method": "GET",
+      "path": "/api/v1/workflows",
+      "handler": "list_workflows"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows",
+      "handler": "create_workflow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/approval/approve",
+      "handler": "approve"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/approval/reject",
+      "handler": "reject"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/approve",
+      "handler": "approve_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/create",
+      "handler": "create_workflow_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/sla/pause",
+      "handler": "pause_sla"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/sla/process",
+      "handler": "process_sla"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/sla/resume",
+      "handler": "resume_sla"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workflows/status/{instance_id}",
+      "handler": "get_workflow_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/trigger",
+      "handler": "trigger_workflow"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/workflows/{workflow_id}",
+      "handler": "delete_workflow"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/workflows/{workflow_id}",
+      "handler": "update_workflow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/{workflow_id}/edges",
+      "handler": "add_edge"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/{workflow_id}/nodes",
+      "handler": "add_node"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workflows/{workflow_id}/sla",
+      "handler": "add_sla"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows",
+      "handler": "list_workflows"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows",
+      "handler": "create_workflow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/approval/approve",
+      "handler": "approve"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/approval/reject",
+      "handler": "reject"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/approve",
+      "handler": "approve_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/create",
+      "handler": "create_workflow_alias"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/sla/pause",
+      "handler": "pause_sla"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/sla/process",
+      "handler": "process_sla"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/sla/resume",
+      "handler": "resume_sla"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/status/{instance_id}",
+      "handler": "get_workflow_status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/trigger",
+      "handler": "trigger_workflow"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/workflows/{workflow_id}",
+      "handler": "delete_workflow"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/workflows/{workflow_id}",
+      "handler": "update_workflow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/{workflow_id}/edges",
+      "handler": "add_edge"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/{workflow_id}/nodes",
+      "handler": "add_node"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/{workflow_id}/sla",
+      "handler": "add_sla"
+    }
+  ]
+}
