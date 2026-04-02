@@ -9,6 +9,7 @@ from app.productivity.repositories.daily_summary_repository import DailySummaryR
 from app.productivity.repositories.policy_breach_repository import PolicyBreachRepository
 from app.productivity.repositories.screenshot_repository import ScreenshotRepository
 from app.productivity.repositories.underproductive_flag_repository import UnderproductiveFlagRepository
+from app.productivity.repositories.productivity_audit_repository import ProductivityAuditRepository
 
 from app.productivity.services.device_service import DeviceService
 from app.productivity.services.agent_registration_service import AgentRegistrationService
@@ -21,6 +22,7 @@ from app.productivity.services.breach_service import BreachService
 from app.productivity.services.screenshot_service import ScreenshotService
 from app.productivity.services.daily_summary_service import DailySummaryService
 from app.productivity.services.underproductive_service import UnderproductiveService
+from app.productivity.services.audit_service import AuditService
 
 _device_repo = DeviceRepository()
 _agent_repo = AgentRegistrationRepository()
@@ -45,3 +47,5 @@ breach_service = BreachService(_breach_repo)
 screenshot_service = ScreenshotService(_screenshot_repo)
 daily_summary_service = DailySummaryService(_daily_repo)
 underproductive_service = UnderproductiveService(_under_repo)
+
+audit_service = AuditService(ProductivityAuditRepository())

@@ -287,6 +287,8 @@ Base path: `/api/v1`
 - `POST /productivity/agent/register`
 - `POST /productivity/agent/heartbeat`
 - `POST /productivity/agent/sync`
+- `GET /productivity/agent/version-report`
+- `GET /productivity/agent/health`
 - `GET /productivity/policy/current`
 - `POST /productivity/policy`
 - `GET /productivity/summary/daily`
