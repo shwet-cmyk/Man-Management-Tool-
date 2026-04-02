@@ -60,6 +60,11 @@ def health() -> dict[str, str]:
     return {"status": "ok", "env": settings.app_env}
 
 
+@app.get("/ready")
+def ready() -> dict[str, str]:
+    return {"status": "ready", "env": settings.app_env}
+
+
 @app.on_event("startup")
 async def startup_event():
     global _scheduler_stop_event

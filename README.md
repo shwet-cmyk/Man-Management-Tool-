@@ -1,63 +1,52 @@
-# TEZ Execution System
+# TEZ Execution System — Local Development Stack
 
-Fresh implementation baseline for an audit-first execution control engine.
+This repository now includes a **one-command local environment** for:
+- FastAPI backend API
+- WebSocket gateway service
+- Celery worker service
+- Redis event bus
+- MSSQL database (schema + seed)
+- React frontend
+- Nginx reverse proxy
 
-## Stack
-- Frontend: React + Vite
-- Backend: FastAPI (Python)
-- Database target: MSSQL (baseline schema in `backend/app/db/mssql_schema.sql`)
-- Runtime backbone: Redis pub/sub + worker scheduler scaffolding (event-driven)
+## Setup (5 steps max)
+1. Copy env file: `cp .env.example .env`
+2. Start everything: `make dev` (or `docker compose up --build`)
+3. Open frontend: `http://localhost:3000`
+4. Open API docs (via nginx): `http://localhost:8080/api/api-docs`
+5. Validate health: `http://localhost:8080/api/health` and `http://localhost:8080/api/ready`
 
-## Run backend
+## Folder structure
+- `backend/` FastAPI app, workers, schema, seed SQL, Postman collection.
+- `websocket-service/` dedicated WS gateway (transport-only + Redis pub/sub).
+- `frontend/` React app.
+- `devops/` Dockerfiles + nginx config.
+- `docker-compose.yml` full local orchestration.
+- `Makefile` lifecycle commands (`dev`, `reset`, `seed`).
+
+## How to run
 ```bash
-pip install fastapi pydantic pydantic-settings uvicorn email-validator
-PYTHONPATH=backend uvicorn app.main:app --reload --port 8000
+make dev
 ```
 
-Docs:
-- Swagger UI: `http://localhost:8000/api-docs`
-- OpenAPI JSON: `http://localhost:8000/api/v1/openapi.json`
-
-## Run frontend
+### Useful lifecycle commands
 ```bash
-cd frontend
-npm install
-npm run dev
+make reset   # stop stack and remove volumes
+make seed    # rerun DB schema + seed
 ```
 
-## Baseline docs
-- `docs/SRS_TEZ_EXECUTION_SYSTEM_v3.md`
-- `docs/ENDPOINT_INVENTORY_API_V1.md`
+## How to debug
+- Backend logs: `docker compose logs -f backend-api`
+- Worker logs: `docker compose logs -f worker-service`
+- WebSocket logs: `docker compose logs -f websocket-service`
+- DB health: `docker compose ps` (check `mssql` healthy)
 
+## Common issues
+- **MSSQL password policy failure**: ensure `MSSQL_SA_PASSWORD` is complex (uppercase/lowercase/number/symbol).
+- **Port conflict**: if 3000/8000/8080/1433 already used, stop conflicting processes or remap ports.
+- **Frontend blank on boot**: wait until `npm ci` finishes inside `frontend` container.
+- **Seed rerun needed**: run `make seed` after `make reset`.
 
-## Implemented modules
-- Login
-- RBAC Master
-- User Master
-- Company Master
-- Governance
-- Interconnect Master
-- Dashboard Engine
-- Global Analytics Engine
-- Global Reporting Engine
-- Project Module
-- Status Engine
-- Ticket Module
-- Task Management Module
-- Approval Engine
-- Automation Engine
-- Algorithm + Calendar Intelligence
-- Task Master + Task Group
-- Governance Dashboard
-- Gamification + Appraisal Engine
-- Collaboration Engine
-- Unified Notification Engine
-- System Audit Module
-
-- Goals & KPI Management
-- Portfolio Management
-- Workflow Template Library
-- Request Intake Forms
-- Client Portal
-- Documentation Module
-- Mobile App Layer (API Baseline)
+## Test assets
+- Postman collection: `backend/tests/postman/tez-local.postman_collection.json`
+- WebSocket test client: `tools/ws_test_client.py`
