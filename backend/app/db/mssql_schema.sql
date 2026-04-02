@@ -1,0 +1,770 @@
+-- TEZ Execution System - MSSQL schema baseline
+
+CREATE TABLE Roles (
+    RoleID INT IDENTITY(1,1) PRIMARY KEY,
+    RoleName NVARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Users (
+    UserID INT IDENTITY(1,1) PRIMARY KEY,
+    FirstName NVARCHAR(100) NOT NULL,
+    LastName NVARCHAR(100) NULL,
+    Email NVARCHAR(200) NOT NULL UNIQUE,
+    Mobile NVARCHAR(30) NULL,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    RoleID INT NOT NULL,
+    ReportsTo INT NULL,
+    EmployeeGroup NVARCHAR(100) NULL,
+    HourlyCost DECIMAL(12,2) NOT NULL DEFAULT 0,
+    ApprovalRequired BIT NOT NULL DEFAULT 0,
+    CompanyID INT NULL,
+    BranchID INT NULL,
+    DepartmentID INT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_Users_Roles FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+);
+
+CREATE TABLE Projects (
+    ProjectID INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(200) NOT NULL,
+    ClientName NVARCHAR(200) NOT NULL,
+    ManagerID INT NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    Status NVARCHAR(50) NOT NULL,
+    EstimatedCost DECIMAL(14,2) NOT NULL DEFAULT 0,
+    EstimatedHours DECIMAL(10,2) NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_Projects_Manager FOREIGN KEY (ManagerID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE Tasks (
+    TaskID INT IDENTITY(1,1) PRIMARY KEY,
+    ProjectID INT NOT NULL,
+    Name NVARCHAR(200) NOT NULL,
+    Priority NVARCHAR(20) NOT NULL,
+    StartDate DATE NULL,
+    EndDate DATE NULL,
+    Status NVARCHAR(50) NOT NULL,
+    EstimatedHours DECIMAL(10,2) NOT NULL DEFAULT 0,
+    EstimatedCost DECIMAL(14,2) NOT NULL DEFAULT 0,
+    Billable BIT NOT NULL DEFAULT 1,
+    BillingAmount DECIMAL(14,2) NOT NULL DEFAULT 0,
+    CreatedBy INT NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_Tasks_Project FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID),
+    CONSTRAINT FK_Tasks_User FOREIGN KEY (CreatedBy) REFERENCES Users(UserID)
+);
+
+CREATE TABLE Jobs (
+    JobID INT IDENTITY(1,1) PRIMARY KEY,
+    TaskID INT NOT NULL,
+    AssignedUserID INT NOT NULL,
+    StartDate DATE NULL,
+    EndDate DATE NULL,
+    Status NVARCHAR(50) NOT NULL,
+    SLADeadline DATETIME2 NULL,
+    CONSTRAINT FK_Jobs_Task FOREIGN KEY (TaskID) REFERENCES Tasks(TaskID),
+    CONSTRAINT FK_Jobs_User FOREIGN KEY (AssignedUserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE Timesheets (
+    TimesheetID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NOT NULL,
+    TaskID INT NULL,
+    JobID INT NULL,
+    [Date] DATE NOT NULL,
+    StartTime TIME NULL,
+    EndTime TIME NULL,
+    Duration DECIMAL(10,2) NOT NULL DEFAULT 0,
+    Remarks NVARCHAR(500) NULL,
+    IsOverlap BIT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_Timesheets_User FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    CONSTRAINT FK_Timesheets_Task FOREIGN KEY (TaskID) REFERENCES Tasks(TaskID),
+    CONSTRAINT FK_Timesheets_Job FOREIGN KEY (JobID) REFERENCES Jobs(JobID)
+);
+
+CREATE TABLE Approvals (
+    ApprovalID INT IDENTITY(1,1) PRIMARY KEY,
+    Module NVARCHAR(100) NOT NULL,
+    ReferenceID INT NOT NULL,
+    [Level] TINYINT NOT NULL,
+    ApproverID INT NOT NULL,
+    Status NVARCHAR(30) NOT NULL,
+    Remarks NVARCHAR(500) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    ActionAt DATETIME2 NULL,
+    CONSTRAINT FK_Approvals_Approver FOREIGN KEY (ApproverID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE Notifications (
+    NotificationID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NOT NULL,
+    Module NVARCHAR(100) NOT NULL,
+    ReferenceID INT NOT NULL,
+    Channel NVARCHAR(30) NOT NULL,
+    TemplateName NVARCHAR(100) NULL,
+    Message NVARCHAR(MAX) NOT NULL,
+    SentAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    DeliveredAt DATETIME2 NULL,
+    ReadAt DATETIME2 NULL,
+    Status NVARCHAR(30) NOT NULL,
+    CONSTRAINT FK_Notifications_User FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE AuditLogs (
+    AuditID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NULL,
+    Module NVARCHAR(100) NOT NULL,
+    ReferenceID NVARCHAR(100) NOT NULL,
+    ActionType NVARCHAR(100) NOT NULL,
+    FieldName NVARCHAR(100) NULL,
+    OldValue NVARCHAR(MAX) NULL,
+    NewValue NVARCHAR(MAX) NULL,
+    [Timestamp] DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+
+CREATE TABLE HelpContent (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    ScreenKey NVARCHAR(150) NOT NULL UNIQUE,
+    Title NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX) NOT NULL,
+    WhenToUse NVARCHAR(MAX) NOT NULL,
+    StepsJson NVARCHAR(MAX) NOT NULL,
+    RulesJson NVARCHAR(MAX) NOT NULL,
+    ErrorsJson NVARCHAR(MAX) NOT NULL,
+    TipsJson NVARCHAR(MAX) NOT NULL,
+    ModuleName NVARCHAR(120) NOT NULL,
+    SubmoduleName NVARCHAR(120) NOT NULL,
+    RoutePath NVARCHAR(200) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+
+CREATE TABLE ChatbotSessions (
+    SessionID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserID INT NULL,
+    RoleName NVARCHAR(80) NULL,
+    CurrentRoutePath NVARCHAR(260) NOT NULL,
+    CurrentScreenKey NVARCHAR(180) NULL,
+    CurrentModuleName NVARCHAR(120) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_ChatbotSessions_User FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE ChatbotMessages (
+    MessageID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    SessionID UNIQUEIDENTIFIER NOT NULL,
+    SenderRole NVARCHAR(20) NOT NULL,
+    MessageText NVARCHAR(MAX) NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_ChatbotMessages_Session FOREIGN KEY (SessionID) REFERENCES ChatbotSessions(SessionID)
+);
+
+CREATE INDEX IX_ChatbotSessions_UserID ON ChatbotSessions(UserID);
+CREATE INDEX IX_ChatbotMessages_SessionCreatedAt ON ChatbotMessages(SessionID, CreatedAt);
+
+CREATE TABLE chatbot_quick_prompts (
+    prompt_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    role_id BIGINT NULL,
+    priority_level NVARCHAR(20) NULL,
+    condition_type NVARCHAR(50) NULL,
+    condition_query NVARCHAR(MAX) NULL,
+    prompt_text_en NVARCHAR(500) NOT NULL,
+    prompt_text_hi NVARCHAR(500) NULL,
+    prompt_text_gu NVARCHAR(500) NULL,
+    prompt_text_mr NVARCHAR(500) NULL,
+    intent_code NVARCHAR(100) NOT NULL,
+    action_type NVARCHAR(50) NOT NULL,
+    route_path NVARCHAR(300) NULL,
+    display_order INT NOT NULL DEFAULT 0,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_at DATETIME2 DEFAULT SYSDATETIME()
+);
+
+CREATE INDEX IX_chatbot_quick_prompts_module_screen_role ON chatbot_quick_prompts(module_name, screen_key, role_id, is_active);
+
+CREATE TABLE device_master (
+    device_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_uuid NVARCHAR(200) NOT NULL UNIQUE,
+    device_name NVARCHAR(200) NOT NULL,
+    device_type NVARCHAR(100) NULL,
+    os_name NVARCHAR(100) NULL,
+    os_version NVARCHAR(100) NULL,
+    employee_user_id BIGINT NOT NULL,
+    company_id BIGINT NOT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    agent_version NVARCHAR(50) NULL,
+    registration_status NVARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
+    last_heartbeat_at DATETIME2 NULL,
+    registered_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE agent_registration (
+    registration_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    registration_token NVARCHAR(500) NOT NULL,
+    token_expires_at DATETIME2 NULL,
+    agent_status NVARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
+    last_sync_at DATETIME2 NULL,
+    last_error NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE productivity_policy (
+    policy_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    policy_name NVARCHAR(200) NOT NULL,
+    scope_type NVARCHAR(30) NOT NULL,
+    scope_reference_id BIGINT NULL,
+    idle_threshold_minutes INT NOT NULL,
+    productive_target_hours DECIMAL(10,2) NOT NULL,
+    borderline_lower_hours DECIMAL(10,2) NOT NULL,
+    underproductive_lower_hours DECIMAL(10,2) NOT NULL,
+    screenshot_capture_enabled BIT NOT NULL DEFAULT 0,
+    screenshot_frequency_minutes INT NULL,
+    raw_retention_days INT NOT NULL DEFAULT 90,
+    screenshot_retention_days INT NOT NULL DEFAULT 90,
+    summary_retention_type NVARCHAR(30) NOT NULL DEFAULT 'PERPETUAL',
+    warn_on_blacklisted_url BIT NOT NULL DEFAULT 1,
+    block_blacklisted_url BIT NOT NULL DEFAULT 0,
+    effective_from DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    effective_to DATETIME2 NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE app_classification_master (
+    app_classification_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    app_name NVARCHAR(200) NOT NULL,
+    executable_name NVARCHAR(200) NULL,
+    app_category NVARCHAR(100) NULL,
+    classification_type NVARCHAR(30) NOT NULL,
+    notes NVARCHAR(MAX) NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE url_classification_master (
+    url_classification_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    domain_name NVARCHAR(300) NOT NULL,
+    url_pattern NVARCHAR(500) NULL,
+    browser_scope NVARCHAR(100) NULL,
+    classification_type NVARCHAR(30) NOT NULL,
+    notes NVARCHAR(MAX) NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE raw_activity_log (
+    activity_log_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    event_type NVARCHAR(50) NOT NULL,
+    event_timestamp DATETIME2 NOT NULL,
+    active_app_name NVARCHAR(300) NULL,
+    active_executable NVARCHAR(300) NULL,
+    active_window_title NVARCHAR(MAX) NULL,
+    active_domain NVARCHAR(500) NULL,
+    active_url NVARCHAR(MAX) NULL,
+    classification_type NVARCHAR(30) NULL,
+    is_idle BIT NOT NULL DEFAULT 0,
+    is_locked BIT NOT NULL DEFAULT 0,
+    is_hibernated BIT NOT NULL DEFAULT 0,
+    input_source NVARCHAR(50) NULL,
+    duration_seconds INT NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE daily_productivity_summary (
+    daily_summary_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    summary_date DATE NOT NULL,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NULL,
+    company_id BIGINT NOT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    present_minutes INT NOT NULL DEFAULT 0,
+    active_minutes INT NOT NULL DEFAULT 0,
+    productive_minutes INT NOT NULL DEFAULT 0,
+    neutral_minutes INT NOT NULL DEFAULT 0,
+    unproductive_minutes INT NOT NULL DEFAULT 0,
+    idle_minutes INT NOT NULL DEFAULT 0,
+    locked_minutes INT NOT NULL DEFAULT 0,
+    hibernate_minutes INT NOT NULL DEFAULT 0,
+    offline_minutes INT NOT NULL DEFAULT 0,
+    shutdown_count INT NOT NULL DEFAULT 0,
+    reboot_count INT NOT NULL DEFAULT 0,
+    productivity_status NVARCHAR(30) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE monthly_productivity_summary (
+    monthly_summary_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    summary_month INT NOT NULL,
+    summary_year INT NOT NULL,
+    user_id BIGINT NOT NULL,
+    company_id BIGINT NOT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    present_minutes INT NOT NULL DEFAULT 0,
+    active_minutes INT NOT NULL DEFAULT 0,
+    productive_minutes INT NOT NULL DEFAULT 0,
+    neutral_minutes INT NOT NULL DEFAULT 0,
+    unproductive_minutes INT NOT NULL DEFAULT 0,
+    idle_minutes INT NOT NULL DEFAULT 0,
+    locked_minutes INT NOT NULL DEFAULT 0,
+    hibernate_minutes INT NOT NULL DEFAULT 0,
+    offline_minutes INT NOT NULL DEFAULT 0,
+    shutdown_count INT NOT NULL DEFAULT 0,
+    reboot_count INT NOT NULL DEFAULT 0,
+    productivity_status NVARCHAR(30) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE policy_breach_log (
+    breach_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NOT NULL,
+    breach_timestamp DATETIME2 NOT NULL,
+    breach_type NVARCHAR(50) NOT NULL,
+    app_name NVARCHAR(300) NULL,
+    domain_name NVARCHAR(500) NULL,
+    url_value NVARCHAR(MAX) NULL,
+    policy_id BIGINT NULL,
+    action_taken NVARCHAR(100) NULL,
+    screenshot_captured BIT NOT NULL DEFAULT 0,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE screenshot_evidence (
+    screenshot_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NOT NULL,
+    captured_at DATETIME2 NOT NULL,
+    trigger_type NVARCHAR(50) NOT NULL,
+    storage_path NVARCHAR(MAX) NOT NULL,
+    file_name NVARCHAR(500) NULL,
+    linked_breach_id BIGINT NULL,
+    expires_at DATETIME2 NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE underproductive_flag_log (
+    flag_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    summary_date DATE NOT NULL,
+    productive_minutes INT NOT NULL,
+    target_minutes INT NOT NULL,
+    productivity_status NVARCHAR(30) NOT NULL,
+    manager_notified BIT NOT NULL DEFAULT 0,
+    employee_notified BIT NOT NULL DEFAULT 0,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE productivity_audit_log (
+    audit_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NULL,
+    action_type NVARCHAR(100) NOT NULL,
+    target_entity NVARCHAR(100) NOT NULL,
+    target_id BIGINT NULL,
+    field_name NVARCHAR(200) NULL,
+    old_value NVARCHAR(MAX) NULL,
+    new_value NVARCHAR(MAX) NULL,
+    remarks NVARCHAR(MAX) NULL,
+    action_timestamp DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE INDEX IX_raw_activity_log_user_date ON raw_activity_log (user_id, event_timestamp);
+CREATE INDEX IX_daily_productivity_summary_user_date ON daily_productivity_summary (user_id, summary_date);
+CREATE INDEX IX_policy_breach_log_user_date ON policy_breach_log (user_id, breach_timestamp);
+CREATE INDEX IX_device_master_employee ON device_master (employee_user_id, is_active);
+
+CREATE TABLE ux_event_log (
+    ux_event_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NULL,
+    company_id BIGINT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    session_id UNIQUEIDENTIFIER NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    element_label NVARCHAR(300) NULL,
+    event_type NVARCHAR(100) NOT NULL,
+    event_timestamp DATETIME2 NOT NULL,
+    value_text NVARCHAR(MAX) NULL,
+    value_number DECIMAL(18,4) NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_page_session (
+    page_session_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    session_id UNIQUEIDENTIFIER NOT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    entered_at DATETIME2 NOT NULL,
+    exited_at DATETIME2 NULL,
+    duration_seconds INT NULL,
+    scroll_depth_percent DECIMAL(5,2) NULL,
+    abandonment_flag BIT NOT NULL DEFAULT 0,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_dead_click_log (
+    dead_click_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    element_label NVARCHAR(300) NULL,
+    click_timestamp DATETIME2 NOT NULL,
+    click_count INT NOT NULL DEFAULT 1,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_rage_click_log (
+    rage_click_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    element_label NVARCHAR(300) NULL,
+    first_click_at DATETIME2 NOT NULL,
+    last_click_at DATETIME2 NOT NULL,
+    click_count INT NOT NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_error_event_log (
+    ux_error_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    error_type NVARCHAR(100) NOT NULL,
+    error_code NVARCHAR(100) NULL,
+    error_message NVARCHAR(MAX) NULL,
+    api_path NVARCHAR(300) NULL,
+    event_timestamp DATETIME2 NOT NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_heatmap_aggregate (
+    heatmap_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    heatmap_type NVARCHAR(50) NOT NULL,
+    aggregate_date DATE NOT NULL,
+    interaction_count INT NOT NULL DEFAULT 0,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_ai_recommendation (
+    recommendation_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    route_path NVARCHAR(300) NULL,
+    recommendation_title NVARCHAR(500) NOT NULL,
+    recommendation_text NVARCHAR(MAX) NOT NULL,
+    evidence_summary NVARCHAR(MAX) NULL,
+    confidence_score DECIMAL(5,2) NULL,
+    severity_level NVARCHAR(30) NULL,
+    status NVARCHAR(30) NOT NULL DEFAULT 'NEW',
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    reviewed_by BIGINT NULL,
+    reviewed_at DATETIME2 NULL
+);
+
+CREATE TABLE release_note_master (
+    release_note_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    release_version NVARCHAR(100) NOT NULL,
+    release_title NVARCHAR(500) NOT NULL,
+    release_summary NVARCHAR(MAX) NOT NULL,
+    release_date DATETIME2 NOT NULL,
+    release_type NVARCHAR(50) NULL,
+    visibility_scope NVARCHAR(50) NOT NULL DEFAULT 'ALL',
+    is_published BIT NOT NULL DEFAULT 0,
+    published_at DATETIME2 NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE release_note_module_map (
+    release_note_module_map_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    release_note_id BIGINT NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    route_path NVARCHAR(300) NULL,
+    change_type NVARCHAR(100) NULL
+);
+
+CREATE TABLE feature_change_log (
+    feature_change_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    release_version NVARCHAR(100) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    route_path NVARCHAR(300) NULL,
+    component_name NVARCHAR(300) NULL,
+    field_name NVARCHAR(200) NULL,
+    old_value NVARCHAR(MAX) NULL,
+    new_value NVARCHAR(MAX) NULL,
+    change_category NVARCHAR(100) NOT NULL,
+    changed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE help_refresh_log (
+    help_refresh_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    screen_key NVARCHAR(200) NOT NULL,
+    route_path NVARCHAR(300) NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    prior_help_version NVARCHAR(100) NULL,
+    new_help_version NVARCHAR(100) NULL,
+    refresh_reason NVARCHAR(MAX) NULL,
+    refresh_mode NVARCHAR(30) NOT NULL,
+    refresh_status NVARCHAR(30) NOT NULL,
+    triggered_by_release_version NVARCHAR(100) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    published_at DATETIME2 NULL
+);
+
+CREATE INDEX IX_ux_event_log_screen_time ON ux_event_log (screen_key, event_timestamp);
+CREATE INDEX IX_ux_event_log_user_time ON ux_event_log (user_id, event_timestamp);
+CREATE INDEX IX_ux_error_event_log_screen_time ON ux_error_event_log (screen_key, event_timestamp);
+CREATE INDEX IX_ux_ai_recommendation_status ON ux_ai_recommendation (status, created_at);
+CREATE INDEX IX_release_note_master_version ON release_note_master (release_version, release_date);
+
+CREATE TABLE global_search_index (
+    search_index_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    entity_type NVARCHAR(100) NOT NULL,
+    entity_id NVARCHAR(100) NOT NULL,
+    display_title NVARCHAR(300) NOT NULL,
+    display_subtitle NVARCHAR(500) NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    company_id BIGINT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    searchable_text NVARCHAR(MAX) NOT NULL,
+    privilege_code NVARCHAR(150) NOT NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE global_search_log (
+    search_log_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    query_text NVARCHAR(300) NOT NULL,
+    result_count INT NOT NULL DEFAULT 0,
+    clicked_result_id BIGINT NULL,
+    searched_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE settings_group (
+    settings_group_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    group_name NVARCHAR(150) NOT NULL UNIQUE,
+    description NVARCHAR(500) NULL
+);
+
+CREATE TABLE settings_registry (
+    setting_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    settings_group_id BIGINT NOT NULL,
+    setting_key NVARCHAR(150) NOT NULL UNIQUE,
+    setting_label NVARCHAR(300) NOT NULL,
+    setting_value NVARCHAR(MAX) NOT NULL,
+    value_type NVARCHAR(30) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    scope_type NVARCHAR(30) NOT NULL DEFAULT 'GLOBAL',
+    scope_reference_id NVARCHAR(100) NULL,
+    is_editable BIT NOT NULL DEFAULT 1,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE settings_change_log (
+    settings_change_log_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    setting_id BIGINT NOT NULL,
+    changed_by BIGINT NOT NULL,
+    old_value NVARCHAR(MAX) NULL,
+    new_value NVARCHAR(MAX) NOT NULL,
+    changed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE exception_register (
+    exception_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    exception_type NVARCHAR(100) NOT NULL,
+    reference_module NVARCHAR(100) NOT NULL,
+    reference_id NVARCHAR(100) NOT NULL,
+    employee_user_id BIGINT NOT NULL,
+    requested_by BIGINT NOT NULL,
+    approved_by BIGINT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason NVARCHAR(MAX) NOT NULL,
+    status NVARCHAR(30) NOT NULL,
+    impact_type NVARCHAR(100) NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE feature_flag_master (
+    feature_flag_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    feature_code NVARCHAR(150) NOT NULL UNIQUE,
+    feature_name NVARCHAR(300) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    description NVARCHAR(MAX) NULL,
+    default_status BIT NOT NULL DEFAULT 0,
+    rollout_mode NVARCHAR(50) NOT NULL,
+    effective_from DATETIME2 NULL,
+    effective_to DATETIME2 NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE feature_flag_scope (
+    scope_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    feature_flag_id BIGINT NOT NULL,
+    scope_type NVARCHAR(30) NOT NULL,
+    scope_reference_id NVARCHAR(100) NOT NULL,
+    is_enabled BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE monitoring_policy_master (
+    policy_master_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    policy_name NVARCHAR(200) NOT NULL,
+    policy_type NVARCHAR(100) NOT NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE employee_policy_acceptance (
+    acceptance_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    policy_version_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NULL,
+    accepted_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    acceptance_mode NVARCHAR(30) NOT NULL,
+    ip_address NVARCHAR(80) NULL
+);
+
+CREATE TABLE import_job_master (
+    import_job_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    import_type NVARCHAR(50) NOT NULL,
+    file_name NVARCHAR(300) NOT NULL,
+    uploaded_by BIGINT NOT NULL,
+    uploaded_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    status NVARCHAR(30) NOT NULL,
+    total_rows INT NOT NULL,
+    success_rows INT NOT NULL,
+    failed_rows INT NOT NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE api_key_master (
+    api_key_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    key_name NVARCHAR(120) NOT NULL UNIQUE,
+    key_hash NVARCHAR(256) NOT NULL,
+    owner_user_id BIGINT NOT NULL,
+    scope_json NVARCHAR(MAX) NOT NULL,
+    status NVARCHAR(30) NOT NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    expires_at DATETIME2 NULL
+);
+
+CREATE TABLE webhook_subscription (
+    subscription_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    event_code NVARCHAR(120) NOT NULL,
+    endpoint_url NVARCHAR(400) NOT NULL,
+    auth_type NVARCHAR(30) NOT NULL,
+    auth_config_json NVARCHAR(MAX) NULL,
+    retry_policy_json NVARCHAR(MAX) NULL,
+    status NVARCHAR(30) NOT NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE impersonation_session (
+    impersonation_session_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    admin_user_id BIGINT NOT NULL,
+    target_user_id BIGINT NOT NULL,
+    started_at DATETIME2 NOT NULL,
+    ended_at DATETIME2 NULL,
+    reason NVARCHAR(MAX) NOT NULL,
+    session_status NVARCHAR(30) NOT NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE archival_policy (
+    archival_policy_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    entity_name NVARCHAR(120) NOT NULL UNIQUE,
+    hot_retention_days INT NOT NULL,
+    warm_retention_days INT NOT NULL,
+    archive_retention_type NVARCHAR(30) NOT NULL,
+    purge_allowed BIT NOT NULL DEFAULT 0,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);

@@ -1,0 +1,39 @@
+from app.product_intelligence.repositories.ux_event_log_repository import UxEventLogRepository
+from app.product_intelligence.repositories.ux_page_session_repository import UxPageSessionRepository
+from app.product_intelligence.repositories.dead_click_repository import DeadClickRepository
+from app.product_intelligence.repositories.rage_click_repository import RageClickRepository
+from app.product_intelligence.repositories.ux_error_event_repository import UxErrorEventRepository
+from app.product_intelligence.repositories.heatmap_repository import HeatmapRepository
+from app.product_intelligence.repositories.ai_recommendation_repository import AiRecommendationRepository
+from app.product_intelligence.repositories.release_note_repository import ReleaseNoteRepository
+from app.product_intelligence.repositories.feature_change_repository import FeatureChangeRepository
+from app.product_intelligence.repositories.help_refresh_repository import HelpRefreshRepository
+
+from app.product_intelligence.services.friction_detection_service import FrictionDetectionService
+from app.product_intelligence.services.heatmap_service import HeatmapService
+from app.product_intelligence.services.ai_ux_recommendation_service import AiUxRecommendationService
+from app.product_intelligence.services.ux_telemetry_service import UxTelemetryService
+from app.product_intelligence.services.ux_analytics_service import UxAnalyticsService
+from app.product_intelligence.services.release_notes_service import ReleaseNotesService
+from app.product_intelligence.services.feature_diff_service import FeatureDiffService
+from app.product_intelligence.services.help_refresh_service import HelpRefreshService
+
+ux_event_repo = UxEventLogRepository()
+ux_page_session_repo = UxPageSessionRepository()
+dead_click_repo = DeadClickRepository()
+rage_click_repo = RageClickRepository()
+ux_error_repo = UxErrorEventRepository()
+heatmap_repo = HeatmapRepository()
+ai_repo = AiRecommendationRepository()
+release_note_repo = ReleaseNoteRepository()
+feature_change_repo = FeatureChangeRepository()
+help_refresh_repo = HelpRefreshRepository()
+
+friction_service = FrictionDetectionService()
+heatmap_service = HeatmapService()
+ai_service = AiUxRecommendationService()
+ux_telemetry_service = UxTelemetryService(friction_service, heatmap_service, ai_service)
+ux_analytics_service = UxAnalyticsService()
+release_notes_service = ReleaseNotesService()
+feature_diff_service = FeatureDiffService()
+help_refresh_service = HelpRefreshService()
