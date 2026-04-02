@@ -1,57 +1,76 @@
+from __future__ import annotations
+
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/rbac", tags=["Users & Roles"])
 
-API_PERMISSION_TREE = {
-    "module": "API",
-    "children": [
-        "API_VIEW_DASHBOARD",
-        "API_APPLICATIONS",
-        "API_ADD_APPLICATION",
-        "API_EDIT_APPLICATION",
-        "API_DISABLE_APPLICATION",
-        "API_REVOKE_APPLICATION",
-        "API_KEYS",
-        "API_GENERATE_KEY",
-        "API_REGENERATE_KEY",
-        "API_REVOKE_KEY",
-        "API_VIEW_KEY_USAGE",
-        "API_SCOPES",
-        "API_ASSIGN_SCOPES",
-        "API_EDIT_SCOPE_MAPPING",
-        "API_ENDPOINT_REGISTRY",
-        "API_VIEW_ENDPOINT_REGISTRY",
-        "API_EDIT_ENDPOINT_METADATA",
-        "API_MARK_ENDPOINT_DEPRECATED",
-        "API_WEBHOOKS",
-        "API_ADD_WEBHOOK",
-        "API_EDIT_WEBHOOK",
-        "API_PAUSE_WEBHOOK",
-        "API_RESUME_WEBHOOK",
-        "API_TEST_WEBHOOK",
-        "API_RETRY_FAILED_WEBHOOK",
-        "API_LOGS",
-        "API_VIEW_LOGS",
-        "API_EXPORT_LOGS",
-        "API_VIEW_FAILED_LOGS",
-        "API_USAGE_RATE_LIMITS",
-        "API_VIEW_USAGE_ANALYTICS",
-        "API_EDIT_RATE_LIMITS",
-        "API_SETTINGS",
-        "API_VIEW_SETTINGS",
-        "API_EDIT_SETTINGS",
-        "API_DOCUMENTATION",
-        "API_VIEW_DOCUMENTATION",
-        "API_EXPORT_DOCUMENTATION",
-        "API_TEST_CONSOLE",
-        "API_RUN_TEST_REQUEST",
-        "API_SENSITIVE_SCOPE_MGMT",
-        "API_VIEW_AUTH_FAILURES",
-        "API_VIEW_SECURITY_EVENTS",
-        "API_ROTATE_SECRETS",
-        "API_MANAGE_ENVIRONMENTS",
-    ],
-}
+MODULES = [
+    "PROJECT",
+    "PHASE",
+    "TASK",
+    "JOB",
+    "TIMESHEET",
+    "APPROVAL",
+    "NOTIFICATION",
+    "CHAT",
+    "AUDIT",
+    "DASHBOARD",
+    "REPORT",
+    "ANALYTICS",
+    "AUTOMATION",
+    "TEMPLATE",
+    "INTERCONNECT",
+    "GOAL",
+    "PORTFOLIO",
+    "CLIENT_PORTAL",
+    "DOCUMENTATION",
+]
+
+ACTIONS = [
+    "VIEW",
+    "CREATE",
+    "EDIT",
+    "DELETE",
+    "ASSIGN",
+    "APPROVE",
+    "REJECT",
+    "SEND_BACK",
+    "CHANGE_STATUS",
+    "EXPORT",
+    "PRINT",
+    "REPORT_VIEW",
+    "ANALYTICS_VIEW",
+    "AUDIT_VIEW",
+    "TRIGGER_ACTION",
+    "CONFIGURE_DASHBOARD",
+    "CONFIGURE_TEMPLATES",
+    "CONFIGURE_AUTOMATION",
+    "VIEW_SENSITIVE_FIELDS",
+]
+
+SURFACES = ["SCREEN", "PANEL", "TAB", "WIDGET", "FIELD_VISIBLE", "FIELD_EDITABLE"]
+
+
+def build_catalog() -> list[dict]:
+    catalog = []
+    idx = 1
+    for module in MODULES:
+        for action in ACTIONS:
+            for surface in SURFACES:
+                catalog.append(
+                    {
+                        "privilege_id": f"PRV-{idx:05d}",
+                        "code": f"{module}_{action}_{surface}",
+                        "module": module,
+                        "action": action,
+                        "surface": surface,
+                    }
+                )
+                idx += 1
+    return catalog
+
+
+API_PERMISSION_TREE = {"module": "API", "children": [x["code"] for x in build_catalog()[:50]]}
 
 
 @router.get("/permission-tree")
@@ -59,12 +78,18 @@ def permission_tree():
     return API_PERMISSION_TREE
 
 
+@router.get("/privileges/catalog")
+def privilege_catalog():
+    catalog = build_catalog()
+    return {"count": len(catalog), "items": catalog}
+
+
 @router.get("/default-role-mapping")
 def default_role_mapping():
     return {
-        "Admin": "full_api_access",
-        "Integration Admin": "all_except_global_env_if_restricted",
-        "API Operator": "ops_plus_limited_key_ops",
-        "Developer/Analyst": "docs_registry_limited_logs",
-        "Auditor": "view_only",
+        "Admin": ["*"],
+        "SuperAdmin": ["*"],
+        "Manager": ["*_VIEW_*", "*_CREATE_*", "*_EDIT_*", "*_APPROVE_*"],
+        "Auditor": ["*_VIEW_*", "*_AUDIT_VIEW_*", "*_REPORT_VIEW_*"],
+        "Employee": ["TASK_VIEW_SCREEN", "TIMESHEET_CREATE_SCREEN", "CHAT_VIEW_SCREEN"],
     }

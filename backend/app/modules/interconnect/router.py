@@ -6,6 +6,8 @@ from enum import Enum
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from app.services.interconnect_registry import REQUIRED_INTERCONNECTS, coverage_matrix as required_coverage_matrix, mark_covered
+
 router = APIRouter(prefix="/interconnects", tags=["Interconnect Master"])
 
 
@@ -49,18 +51,7 @@ class CoverageUpdateRequest(BaseModel):
 
 
 INTERCONNECTS: dict[int, dict] = {}
-MODULES = {
-    "LOGIN",
-    "RBAC",
-    "USER_MASTER",
-    "ORG_MASTER",
-    "TASKS",
-    "JOBS",
-    "TIMESHEETS",
-    "REPORTS",
-    "ANALYTICS",
-    "INTERCONNECT_MASTER",
-}
+MODULES = {x for pair in REQUIRED_INTERCONNECTS for x in pair} | {"LOGIN", "RBAC", "USER_MASTER", "ORG_MASTER", "REPORTS", "ANALYTICS", "INTERCONNECT_MASTER"}
 
 
 def _detect_circular(source: str, target: str) -> bool:
@@ -112,6 +103,7 @@ def create_interconnect(payload: InterconnectCreateRequest):
         ],
     }
     INTERCONNECTS[next_id] = record
+    mark_covered(payload.source_module_id, payload.target_module_id, source_ref=f"interconnect:{next_id}")
     return record
 
 
@@ -141,7 +133,7 @@ def coverage_matrix():
     for row in INTERCONNECTS.values():
         matrix[row["source_module_id"]][row["target_module_id"]] = row["coverage_status"]
 
-    return matrix
+    return {"declared": matrix, "required": required_coverage_matrix()}
 
 
 @router.get("/reports/summary")

@@ -34,6 +34,7 @@ from app.modules.intake_forms.router import router as intake_forms_router
 from app.modules.client_portal.router import router as client_portal_router
 from app.modules.knowledge_base.router import router as knowledge_base_router
 from app.modules.mobile_app.router import router as mobile_app_router
+from app.modules.execution_governance.router import router as execution_governance_router
 from app.workers.scheduler import run_periodic_jobs
 
 app = FastAPI(
@@ -112,3 +113,5 @@ app.include_router(intake_forms_router, prefix=settings.api_v1_prefix)
 app.include_router(client_portal_router, prefix=settings.api_v1_prefix)
 app.include_router(knowledge_base_router, prefix=settings.api_v1_prefix)
 app.include_router(mobile_app_router, prefix=settings.api_v1_prefix)
+
+app.include_router(execution_governance_router, prefix=settings.api_v1_prefix)
