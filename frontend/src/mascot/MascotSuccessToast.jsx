@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MascotStateRenderer } from './MascotStateRenderer'
 
 export function MascotSuccessToast({ open, message = 'All set.', onClose }) {

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, Query, Response, status
 from pydantic import BaseModel
 
 from app.chatbot.bal import ChatbotBAL
@@ -36,6 +36,7 @@ def get_quick_prompts(
     return _bal.quick_prompts(module_name=module_name, screen_key=screen_key, user_id=user_id, language=language, limit=limit)
 
 
-@router.post('/quick-prompts/usage', status_code=status.HTTP_204_NO_CONTENT)
-def track_quick_prompt_usage(payload: QuickPromptUsageRequest) -> None:
+@router.post('/quick-prompts/usage', status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+def track_quick_prompt_usage(payload: QuickPromptUsageRequest) -> Response:
     _bal.track_prompt_usage(user_id=payload.user_id, prompt_id=payload.prompt_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

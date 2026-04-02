@@ -1,3 +1,4 @@
+import React from 'react'
 import { MascotStateRenderer } from './MascotStateRenderer'
 
 export function MascotErrorState({ message = 'Oh no. I couldn’t complete that request.' }) {

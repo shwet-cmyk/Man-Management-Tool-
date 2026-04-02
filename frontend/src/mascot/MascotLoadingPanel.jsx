@@ -1,3 +1,4 @@
+import React from 'react'
 import { MascotStateRenderer } from './MascotStateRenderer'
 
 export function MascotLoadingPanel({ message = 'Loading…' }) {

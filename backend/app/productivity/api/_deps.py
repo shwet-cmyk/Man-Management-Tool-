@@ -35,6 +35,9 @@ _breach_repo = PolicyBreachRepository()
 _screenshot_repo = ScreenshotRepository()
 _under_repo = UnderproductiveFlagRepository()
 
+# Keep repository-level dependency available for modules that consume raw repo methods.
+daily_summary_repo = _daily_repo
+
 
 device_service = DeviceService(_device_repo)
 agent_registration_service = AgentRegistrationService(_agent_repo)
