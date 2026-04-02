@@ -343,7 +343,7 @@ function NewFeaturesPage() {
     const load = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`${apiBase}/product-intelligence/release-notes/latest`)
+        const res = await fetch(`${apiBase}/product-intelligence/release-notes/latest`, { headers: { 'x-role': 'admin' } })
         if (res.ok) setItems(await res.json())
       } finally {
         setLoading(false)

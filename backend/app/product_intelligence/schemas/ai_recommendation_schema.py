@@ -1,5 +1,11 @@
 from __future__ import annotations
+
+from typing import Literal
+
 from pydantic import BaseModel
+
+RecommendationStatus = Literal['NEW', 'UNDER_REVIEW', 'ACCEPTED', 'REJECTED', 'IMPLEMENTED']
+
 
 class AiRecommendationResponse(BaseModel):
     recommendation_id: int
@@ -10,7 +16,8 @@ class AiRecommendationResponse(BaseModel):
     evidence_summary: str | None = None
     confidence_score: float | None = None
     severity_level: str | None = None
-    status: str
+    status: RecommendationStatus
+
 
 class AiRecommendationStatusUpdate(BaseModel):
-    status: str
+    status: RecommendationStatus
