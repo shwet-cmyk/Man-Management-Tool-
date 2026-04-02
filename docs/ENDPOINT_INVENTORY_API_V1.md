@@ -20,6 +20,7 @@ Base path: `/api/v1`
 ## Governance Engines
 - `GET /governance/validation-rules`
 - `GET /governance/audit-events`
+- `GET /governance/module-compliance`
 
 ## Interconnect Master
 - `GET /interconnects/modules`

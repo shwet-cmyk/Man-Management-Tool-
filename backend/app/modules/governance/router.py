@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from app.services.module_compliance_registry import module_compliance_report
+
 router = APIRouter(prefix="/governance", tags=["Governance"])
 
 
@@ -17,3 +19,8 @@ def audit_events():
         "tracked": ["field_changes", "role_changes", "status_changes", "login"],
         "audit_first": True,
     }
+
+
+@router.get('/module-compliance')
+def module_compliance():
+    return module_compliance_report()

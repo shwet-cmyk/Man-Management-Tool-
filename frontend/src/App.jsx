@@ -21,7 +21,7 @@ const menuTree = [
   { key: 'projects', label: 'Projects', roles: ['Admin', 'Manager'], children: [{ label: 'Project List', path: '/projects' }, { label: 'Tasks', path: '/tasks' }] },
   { key: 'execution', label: 'Execution', roles: ['Admin', 'Manager'], children: [{ label: 'Jobs', path: '/jobs' }, { label: 'Timesheets', path: '/timesheets' }, { label: 'Approvals', path: '/approvals' }] },
   { key: 'collaboration', label: 'Collaboration', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Notifications', path: '/notifications' }] },
-  { key: 'governance', label: 'Governance', roles: ['Admin'], children: [{ label: 'Interconnect', path: '/interconnect' }, { label: 'Reports', path: '/reports' }, { label: 'Analytics', path: '/analytics' }] },
+  { key: 'governance', label: 'Governance', roles: ['Admin'], children: [{ label: 'Interconnect', path: '/interconnect' }, { label: 'Reports', path: '/reports' }, { label: 'Analytics', path: '/analytics' }, { label: 'Compliance Matrix', path: '/governance/compliance' }] },
 ]
 
 const defaultPanel = { open: false, mode: null, module: null, data: null }
@@ -95,6 +95,7 @@ function App() {
               <Route path="/jobs" element={<GridModule title="Jobs" rows={data.jobs} columns={jobColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
               <Route path="/timesheets" element={<GridModule title="Timesheets" rows={data.timesheets} columns={timesheetColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
               <Route path="/approvals" element={<GridModule title="Approvals" rows={data.approvals} columns={approvalColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
+              <Route path="/governance/compliance" element={<ModuleCompliancePage />} />
               <Route path="*" element={<SimplePage title={location.pathname} />} />
             </Routes>
           </div>
@@ -289,6 +290,46 @@ function SettingToggle({ label, checked, onChange }) {
       {label}
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
     </label>
+  )
+}
+
+function ModuleCompliancePage() {
+  const [report, setReport] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
+
+  const load = async () => {
+    setLoading(true)
+    try {
+      const resp = await fetch(`${apiBase}/governance/module-compliance`)
+      if (resp.ok) setReport(await resp.json())
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { load() }, [])
+
+  return (
+    <div style={{ background: '#fff', padding: 12 }}>
+      <h3>Module Compliance Matrix</h3>
+      <button onClick={load}>Refresh</button>
+      {loading && <p>Loading...</p>}
+      {!loading && report && (
+        <table width="100%" cellPadding="8" style={{ marginTop: 8 }}>
+          <thead><tr><th>Module</th><th>Status</th><th>Missing Capabilities</th></tr></thead>
+          <tbody>
+            {report.modules.map((m) => (
+              <tr key={m.module_name}>
+                <td>{m.module_name}</td>
+                <td>{m.compliant ? '✅ Complete' : '⚠️ Needs update'}</td>
+                <td>{m.missing_capabilities.length ? m.missing_capabilities.join(', ') : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   )
 }
 
