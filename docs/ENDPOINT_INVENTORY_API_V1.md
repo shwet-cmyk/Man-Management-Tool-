@@ -274,3 +274,8 @@ Base path: `/api/v1`
 - `GET /help`
 - `GET /help/route/map`
 - `GET /help/route/resolve`
+
+
+## Contextual Chatbot
+- `POST /chatbot/query`
+- `GET /chatbot/sessions/{session_id}/messages`

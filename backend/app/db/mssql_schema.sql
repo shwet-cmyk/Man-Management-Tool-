@@ -141,3 +141,27 @@ CREATE TABLE HelpContent (
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
+
+CREATE TABLE ChatbotSessions (
+    SessionID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserID INT NULL,
+    RoleName NVARCHAR(80) NULL,
+    CurrentRoutePath NVARCHAR(260) NOT NULL,
+    CurrentScreenKey NVARCHAR(180) NULL,
+    CurrentModuleName NVARCHAR(120) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_ChatbotSessions_User FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE ChatbotMessages (
+    MessageID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    SessionID UNIQUEIDENTIFIER NOT NULL,
+    SenderRole NVARCHAR(20) NOT NULL,
+    MessageText NVARCHAR(MAX) NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_ChatbotMessages_Session FOREIGN KEY (SessionID) REFERENCES ChatbotSessions(SessionID)
+);
+
+CREATE INDEX IX_ChatbotSessions_UserID ON ChatbotSessions(UserID);
+CREATE INDEX IX_ChatbotMessages_SessionCreatedAt ON ChatbotMessages(SessionID, CreatedAt);

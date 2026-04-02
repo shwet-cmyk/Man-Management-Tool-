@@ -50,3 +50,8 @@ make seed    # rerun DB schema + seed
 ## Test assets
 - Postman collection: `backend/tests/postman/tez-local.postman_collection.json`
 - WebSocket test client: `tools/ws_test_client.py`
+
+## Contextual assistant UX
+- Chatbot is now exposed as a **global floating assistant** in the frontend (not as a sidebar module entry).
+- Assistant sends route/screen context (`route_path`, `screen_key`, `module_name`) to backend `/api/v1/chatbot/query`.
+- Backend includes BAL/BLL/DAL scaffold under `backend/app/chatbot/` with session history endpoint.

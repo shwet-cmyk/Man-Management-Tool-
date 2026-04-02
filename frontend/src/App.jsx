@@ -6,12 +6,11 @@ const PRODUCT_NAME = 'TEZ Execution System'
 const COMPANY_NAME = 'TEZ Global'
 const FY = '2026-27'
 
-
 const menuTree = [
   { key: 'dashboard', label: 'Dashboard', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Main', path: '/dashboard' }] },
   { key: 'projects', label: 'Projects', roles: ['Admin', 'Manager'], children: [{ label: 'Project List', path: '/projects' }, { label: 'Tasks', path: '/tasks' }] },
   { key: 'execution', label: 'Execution', roles: ['Admin', 'Manager'], children: [{ label: 'Jobs', path: '/jobs' }, { label: 'Timesheets', path: '/timesheets' }, { label: 'Approvals', path: '/approvals' }] },
-  { key: 'collaboration', label: 'Collaboration', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Chat', path: '/chat' }, { label: 'Notifications', path: '/notifications' }] },
+  { key: 'collaboration', label: 'Collaboration', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Notifications', path: '/notifications' }] },
   { key: 'governance', label: 'Governance', roles: ['Admin'], children: [{ label: 'Interconnect', path: '/interconnect' }, { label: 'Reports', path: '/reports' }, { label: 'Analytics', path: '/analytics' }, { label: 'Audit', path: '/audit' }] },
 ]
 
@@ -31,9 +30,7 @@ function App() {
   const [selection, setSelection] = useState([])
   const [panel, setPanel] = useState(defaultPanel)
   const [bulkMode, setBulkMode] = useState(false)
-  const [filters, setFilters] = useState({})
   const [data, setData] = useState(sampleData)
-  const [chat, setChat] = useState([{ id: 1, user: 'system', text: 'Welcome to execution chat' }])
   const [helpOpen, setHelpOpen] = useState(false)
   const [helpLoading, setHelpLoading] = useState(false)
   const [helpContent, setHelpContent] = useState(null)
@@ -42,20 +39,6 @@ function App() {
   const location = useLocation()
   const navigate = useNavigate()
   const visibleMenu = useMemo(() => menuTree.filter((item) => item.roles.includes(ROLE)), [])
-
-  useEffect(() => {
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws'
-    const ws = new WebSocket(`${wsUrl}/web-user`)
-    ws.onmessage = (evt) => {
-      try {
-        const parsed = JSON.parse(evt.data)
-        if (parsed.type === 'CHAT') setChat((curr) => [...curr, { id: Date.now(), user: parsed.from || 'peer', text: parsed.payload?.message || '' }])
-      } catch {
-        // ignore malformed data
-      }
-    }
-    return () => ws.close()
-  }, [])
 
   const openHelp = async () => {
     setHelpOpen(true)
@@ -68,14 +51,14 @@ function App() {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
     try {
       const resolver = await fetch(`${apiBase}/help/route/resolve?path=${encodeURIComponent(location.pathname)}`)
-      let data
+      let responseData
       if (resolver.ok) {
-        data = await resolver.json()
+        responseData = await resolver.json()
       } else {
-        data = await (await fetch(`${apiBase}/help/dashboard_main`)).json()
+        responseData = await (await fetch(`${apiBase}/help/dashboard_main`)).json()
       }
-      setHelpContent(data)
-      setHelpCache((curr) => ({ ...curr, [cacheKey]: data }))
+      setHelpContent(responseData)
+      setHelpCache((curr) => ({ ...curr, [cacheKey]: responseData }))
     } catch {
       setHelpContent({ title: 'Help unavailable', description: 'Help content not yet configured for this screen', steps_json: [], rules_json: [], errors_json: [], tips_json: [] })
     } finally {
@@ -102,7 +85,6 @@ function App() {
               <Route path="/timesheets" element={<GridModule title="Timesheets" rows={data.timesheets} columns={timesheetColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
               <Route path="/approvals" element={<GridModule title="Approvals" rows={data.approvals} columns={approvalColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
               <Route path="/audit" element={<GridModule title="Audit Logs" rows={data.audit} columns={auditColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
-              <Route path="/chat" element={<ChatModule chat={chat} setChat={setChat} />} />
               <Route path="*" element={<SimplePage title={location.pathname} />} />
             </Routes>
           </div>
@@ -112,8 +94,93 @@ function App() {
         <ContextPanel panel={panel} close={() => setPanel(defaultPanel)} />
       </div>
 
+      <FloatingAssistant currentPath={location.pathname} />
       {helpOpen && <HelpPanel loading={helpLoading} content={helpContent} onClose={() => setHelpOpen(false)} />}
     </div>
+  )
+}
+
+function FloatingAssistant({ currentPath }) {
+  const [open, setOpen] = useState(false)
+  const [messages, setMessages] = useState([{ id: 1, role: 'assistant', text: 'Hi! I am your execution assistant. Ask me anything about this screen.' }])
+  const [draft, setDraft] = useState('')
+  const [sessionId, setSessionId] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
+
+  useEffect(() => {
+    if (!open || !sessionId) return
+    const loadHistory = async () => {
+      try {
+        const resp = await fetch(`${apiBase}/chatbot/sessions/${sessionId}/messages`)
+        if (!resp.ok) return
+        const data = await resp.json()
+        if (Array.isArray(data.items) && data.items.length) {
+          setMessages(data.items.map((item, index) => ({ id: item.id || `${item.role}-${index}`, role: item.role, text: item.content })))
+        }
+      } catch {
+        // no-op for demo mode
+      }
+    }
+    loadHistory()
+  }, [open, sessionId, apiBase])
+
+  const send = async () => {
+    if (!draft.trim() || loading) return
+    const nextMessage = draft.trim()
+    setDraft('')
+    setMessages((curr) => [...curr, { id: Date.now(), role: 'user', text: nextMessage }])
+    setLoading(true)
+    try {
+      const response = await fetch(`${apiBase}/chatbot/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: nextMessage,
+          session_id: sessionId,
+          context: {
+            route_path: currentPath,
+            screen_key: currentPath.replaceAll('/', '_') || 'dashboard_main',
+            module_name: currentPath.split('/')[1] || 'dashboard',
+          },
+          actor: { user_id: 1, role: 'Admin' },
+        }),
+      })
+      if (!response.ok) throw new Error('query failed')
+      const payload = await response.json()
+      setSessionId(payload.session_id)
+      setMessages((curr) => [...curr, { id: Date.now() + 1, role: 'assistant', text: payload.reply }])
+    } catch {
+      setMessages((curr) => [...curr, { id: Date.now() + 1, role: 'assistant', text: `I could not reach chatbot service. You are currently on ${currentPath}.` }])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <>
+      <button onClick={() => setOpen((v) => !v)} style={{ position: 'fixed', right: 24, bottom: 24, borderRadius: 999, width: 56, height: 56, border: 'none', background: '#1d4ed8', color: '#fff', fontSize: 22, cursor: 'pointer', zIndex: 40 }} aria-label="Open assistant">💬</button>
+      {open && (
+        <section style={{ position: 'fixed', right: 24, bottom: 90, width: 360, height: 440, background: '#fff', border: '1px solid #cbd5e1', borderRadius: 10, boxShadow: '0 10px 35px rgba(15, 23, 42, 0.2)', display: 'grid', gridTemplateRows: 'auto 1fr auto', zIndex: 41 }}>
+          <header style={{ padding: '10px 12px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between' }}>
+            <strong>Execution Assistant</strong>
+            <small style={{ color: '#475569' }}>{currentPath}</small>
+          </header>
+          <div style={{ padding: 10, overflowY: 'auto', background: '#f8fafc' }}>
+            {messages.map((m) => (
+              <div key={m.id} style={{ marginBottom: 8, textAlign: m.role === 'user' ? 'right' : 'left' }}>
+                <span style={{ display: 'inline-block', maxWidth: '90%', background: m.role === 'user' ? '#dbeafe' : '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '8px 10px' }}>{m.text}</span>
+              </div>
+            ))}
+          </div>
+          <footer style={{ display: 'flex', gap: 6, padding: 10, borderTop: '1px solid #e2e8f0' }}>
+            <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask about this screen..." style={{ flex: 1 }} />
+            <button onClick={send} disabled={loading}>{loading ? '...' : 'Send'}</button>
+          </footer>
+        </section>
+      )}
+    </>
   )
 }
 
@@ -173,7 +240,6 @@ function DataGrid({ rows, columns, selection, setSelection }) { return <table wi
 function ContextPanel({ panel, close }) { if (!panel.open) return <aside style={{ width: 0 }} />; return <aside style={{ width: 340, background: '#fff', borderLeft: '1px solid #cbd5e1', padding: 12 }}><h3>Context Panel</h3><h4>{panel.mode} - {panel.module}</h4><button onClick={close}>Close</button></aside> }
 function BottomPanel() { return <div style={{ background: '#fff', borderTop: '1px solid #e2e8f0', padding: 8 }}>Bottom Panel: Comments | Audit | Notes | Attachments</div> }
 function SimplePage({ title }) { return <div style={{ background: '#fff', padding: 16 }}>{title}</div> }
-function ChatModule({ chat, setChat }) { const [msg, setMsg] = useState(''); return <div style={{ background: '#fff', padding: 12 }}><h3>Chat</h3>{chat.map((m) => <div key={m.id}><b>{m.user}:</b> {m.text}</div>)}<input value={msg} onChange={(e) => setMsg(e.target.value)} /><button onClick={() => { if (!msg.trim()) return; setChat((c) => [...c, { id: Date.now(), user: 'me', text: msg }]); setMsg('') }}>Send</button></div> }
 
 const projectColumns = (setPanel) => [{ key: 'name', label: 'Project', onView: (r) => setPanel({ open: true, mode: 'view', module: '/projects', data: r }), onEdit: (r) => setPanel({ open: true, mode: 'edit', module: '/projects', data: r }) }, { key: 'client', label: 'Client' }, { key: 'status', label: 'Status' }, { key: 'sla', label: 'SLA' }, { key: 'progress', label: 'Progress' }]
 const taskColumns = (setPanel) => [{ key: 'task', label: 'Task', onView: (r) => setPanel({ open: true, mode: 'view', module: '/tasks', data: r }), onEdit: (r) => setPanel({ open: true, mode: 'edit', module: '/tasks', data: r }) }, { key: 'project', label: 'Project' }, { key: 'phase', label: 'Phase' }, { key: 'status', label: 'Status' }, { key: 'dependency', label: 'Dependency' }, { key: 'sla', label: 'SLA' }]
