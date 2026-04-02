@@ -7,6 +7,8 @@ from enum import Enum
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
 
+from app.core.event_bus import publish_event
+from app.core.security import verify_token
 router = APIRouter(prefix="/collaboration", tags=["Collaboration Engine"])
 
 
@@ -233,6 +235,7 @@ async def send_message(payload: MessageRequest):
         NOTIFICATIONS.append(note)
         await manager.push(member, {"event": "NEW_MESSAGE", "payload": msg})
 
+    publish_event("CHAT_MESSAGE_SENT", {"chat_id": payload.chat_id, "message_id": mid, "sender": payload.sender})
     return msg
 
 
@@ -383,6 +386,15 @@ def collaboration_analytics():
 
 @router.websocket("/ws/{user}")
 async def websocket_presence(websocket: WebSocket, user: str):
+    token = websocket.query_params.get("token")
+    if not token:
+        await websocket.close(code=4401)
+        return
+    claims = verify_token(token)
+    if claims.get("sub") != user:
+        await websocket.close(code=4403)
+        return
+
     await manager.connect(user, websocket)
     PRESENCE[user] = {"user": user, "status": PresenceStatus.online, "last_seen": datetime.utcnow()}
     try:

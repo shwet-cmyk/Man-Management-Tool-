@@ -6,6 +6,7 @@ from enum import Enum
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from app.core.event_bus import publish_event
 from app.modules.system_audit.router import AuditCreateRequest, add_audit_entry
 
 router = APIRouter(prefix="/notifications", tags=["Unified Notification Engine"])
@@ -119,7 +120,9 @@ def trigger_notification(payload: TriggerRequest):
         raise HTTPException(status_code=422, detail="Unknown template")
 
     message = _render(template, payload.variables)
-    return _create_log(payload=payload, message=message)
+    row = _create_log(payload=payload, message=message)
+    publish_event("NOTIFICATION_SENT", {"notification_id": row["notification_id"], "module": payload.module, "event_type": payload.event_type})
+    return row
 
 
 @router.get("/{user}")
@@ -183,6 +186,7 @@ def run_notification_escalations(hours_unread: int = 24):
                 remarks="Unread threshold exceeded",
             )
         )
+        publish_event("NOTIFICATION_ESCALATED", {"notification_id": row["notification_id"], "module": row["module"]})
 
     return {"count": len(escalated), "notification_ids": escalated}
 

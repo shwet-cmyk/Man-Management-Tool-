@@ -5,7 +5,8 @@ Fresh implementation baseline for an audit-first execution control engine.
 ## Stack
 - Frontend: React + Vite
 - Backend: FastAPI (Python)
-- Database target: MSSQL (to be wired in next increment)
+- Database target: MSSQL (baseline schema in `backend/app/db/mssql_schema.sql`)
+- Runtime backbone: Redis pub/sub + worker scheduler scaffolding (event-driven)
 
 ## Run backend
 ```bash
@@ -52,3 +53,11 @@ npm run dev
 - Collaboration Engine
 - Unified Notification Engine
 - System Audit Module
+
+- Goals & KPI Management
+- Portfolio Management
+- Workflow Template Library
+- Request Intake Forms
+- Client Portal
+- Documentation Module
+- Mobile App Layer (API Baseline)

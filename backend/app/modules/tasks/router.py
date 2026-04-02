@@ -835,3 +835,18 @@ def ai_scheduling_suggestions(task_master_id: int, planned_hours: float, priorit
             else None
         ),
     }
+
+
+@router.post("/create")
+def create_task_action(payload: TaskCreateRequest):
+    return create_task(payload)
+
+
+@router.post("/jobs/update-status")
+def update_job_status_action(job_id: int, payload: JobStatusUpdateRequest):
+    return update_job_status(job_id, payload)
+
+
+@router.post("/timesheets/add")
+def add_timesheet_action(payload: TimesheetCreateRequest):
+    return create_timesheet(payload)

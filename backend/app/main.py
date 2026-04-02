@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.core.rate_limit import RateLimitMiddleware
+from app.modules.login.router import auth_router
 from app.modules.login.router import router as login_router
 from app.modules.rbac.router import router as rbac_router
 from app.modules.users.router import router as users_router
@@ -23,7 +25,16 @@ from app.modules.governance_dashboard.router import router as governance_dashboa
 from app.modules.gamification.router import router as gamification_router
 from app.modules.collaboration.router import router as collaboration_router
 from app.modules.notification_engine.router import router as notification_router
+from app.modules.system_audit.router import alias_router as audit_alias_router
 from app.modules.system_audit.router import router as system_audit_router
+from app.modules.goals_kpi.router import router as goals_kpi_router
+from app.modules.portfolio.router import router as portfolio_router
+from app.modules.workflow_templates.router import router as workflow_templates_router
+from app.modules.intake_forms.router import router as intake_forms_router
+from app.modules.client_portal.router import router as client_portal_router
+from app.modules.knowledge_base.router import router as knowledge_base_router
+from app.modules.mobile_app.router import router as mobile_app_router
+from app.workers.scheduler import run_periodic_jobs
 
 app = FastAPI(
     title=settings.app_name,
@@ -39,6 +50,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(RateLimitMiddleware, limit=200, window_seconds=60)
+
+_scheduler_stop_event = None
 
 
 @app.get("/health")
@@ -46,7 +60,23 @@ def health() -> dict[str, str]:
     return {"status": "ok", "env": settings.app_env}
 
 
+@app.on_event("startup")
+async def startup_event():
+    global _scheduler_stop_event
+    import asyncio
+
+    _scheduler_stop_event = asyncio.Event()
+    asyncio.create_task(run_periodic_jobs(_scheduler_stop_event))
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    if _scheduler_stop_event:
+        _scheduler_stop_event.set()
+
+
 app.include_router(login_router, prefix=settings.api_v1_prefix)
+app.include_router(auth_router, prefix=settings.api_v1_prefix)
 app.include_router(rbac_router, prefix=settings.api_v1_prefix)
 app.include_router(users_router, prefix=settings.api_v1_prefix)
 app.include_router(org_router, prefix=settings.api_v1_prefix)
@@ -69,3 +99,11 @@ app.include_router(gamification_router, prefix=settings.api_v1_prefix)
 app.include_router(collaboration_router, prefix=settings.api_v1_prefix)
 app.include_router(notification_router, prefix=settings.api_v1_prefix)
 app.include_router(system_audit_router, prefix=settings.api_v1_prefix)
+app.include_router(audit_alias_router, prefix=settings.api_v1_prefix)
+app.include_router(goals_kpi_router, prefix=settings.api_v1_prefix)
+app.include_router(portfolio_router, prefix=settings.api_v1_prefix)
+app.include_router(workflow_templates_router, prefix=settings.api_v1_prefix)
+app.include_router(intake_forms_router, prefix=settings.api_v1_prefix)
+app.include_router(client_portal_router, prefix=settings.api_v1_prefix)
+app.include_router(knowledge_base_router, prefix=settings.api_v1_prefix)
+app.include_router(mobile_app_router, prefix=settings.api_v1_prefix)

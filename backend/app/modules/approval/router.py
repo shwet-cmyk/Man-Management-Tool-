@@ -408,3 +408,16 @@ def approval_notifications():
 @router.get("/audit-log")
 def approval_audit_log():
     return APPROVAL_AUDIT
+
+
+@router.post("/approve")
+def approve_action(approval_id: int, actor_user_id: int, actor_role: str, remarks: str | None = None):
+    return approval_action(
+        approval_id=approval_id,
+        payload=ApprovalActionRequest(
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            action="APPROVE",
+            remarks=remarks,
+        ),
+    )

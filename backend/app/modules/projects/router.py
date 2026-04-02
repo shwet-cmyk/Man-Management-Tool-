@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from app.modules.collaboration.router import ensure_project_channel
 from app.modules.system_audit.router import AuditCreateRequest, add_audit_entry
+from app.core.event_bus import publish_event
 
 router = APIRouter(prefix="/projects", tags=["Project Module"])
 
@@ -118,6 +119,7 @@ def create_project(payload: ProjectCreateRequest):
             remarks="Project created",
         )
     )
+    publish_event("PROJECT_CREATED", {"project_id": pid, "project_name": payload.project_name})
     return project
 
 
@@ -155,6 +157,7 @@ def update_project_status(project_id: int, payload: ProjectStatusUpdateRequest):
             remarks=None,
         )
     )
+    publish_event("PROJECT_STATUS_CHANGED", {"project_id": project_id, "status": payload.status})
     return project
 
 

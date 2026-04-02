@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/system-audit", tags=["System Audit"])
+alias_router = APIRouter(prefix="/audit", tags=["System Audit"])
 
 AUDIT_ENTRIES: dict[int, dict] = {}
 
@@ -138,3 +139,8 @@ def export_logs(format: str = "excel"):
     if format not in {"excel", "pdf"}:
         raise HTTPException(status_code=422, detail="Unsupported format")
     return {"format": format, "rows": list(AUDIT_ENTRIES.values())}
+
+
+@alias_router.get("/logs")
+def alias_logs():
+    return list_audit_logs()

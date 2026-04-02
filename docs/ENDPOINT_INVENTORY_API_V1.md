@@ -104,12 +104,15 @@ Base path: `/api/v1`
 - `GET /tasks/rbac/permissions`
 - `GET /tasks`
 - `POST /tasks`
+- `POST /tasks/create`
 - `GET /tasks/{task_id}`
 - `PUT /tasks/{task_id}`
 - `PATCH /tasks/{task_id}/status`
 - `GET /tasks/{task_id}/jobs`
 - `PATCH /tasks/jobs/{job_id}/status`
+- `POST /tasks/jobs/update-status`
 - `POST /tasks/timesheets`
+- `POST /tasks/timesheets/add`
 - `GET /tasks/timesheets`
 - `GET /tasks/timesheets/overlap-report`
 - `GET /tasks/{task_id}/costing`
@@ -133,6 +136,7 @@ Base path: `/api/v1`
 - `GET /approvals/analytics/summary`
 - `GET /approvals/notifications`
 - `GET /approvals/audit-log`
+- `POST /approvals/approve`
 
 ## Automation Engine
 - `GET /automation/variables`
@@ -222,3 +226,45 @@ Base path: `/api/v1`
 - `GET /system-audit/reports/summary`
 - `GET /system-audit/analytics/summary`
 - `GET /system-audit/export`
+- `GET /audit/logs`
+
+## Auth (API Contract Alignment)
+- `POST /auth/login`
+- `POST /auth/logout`
+- `POST /auth/refresh`
+
+## Goals & KPI Management
+- `POST /goals`
+- `GET /goals`
+- `GET /goals/{goal_id}`
+- `PATCH /goals/{goal_id}/progress`
+- `GET /goals/reports/achievement`
+
+## Portfolio Management
+- `POST /portfolios`
+- `GET /portfolios`
+- `GET /portfolios/{portfolio_id}/dashboard`
+
+## Workflow Template Library
+- `POST /workflow-templates`
+- `GET /workflow-templates`
+- `POST /workflow-templates/{template_id}/apply`
+
+## Request Intake Forms
+- `POST /intake-forms`
+- `POST /intake-forms/{form_id}/submit`
+
+## Client Portal
+- `POST /client-portal/guest-login`
+- `GET /client-portal/projects/{project_id}`
+- `POST /client-portal/tickets`
+
+## Documentation Module
+- `POST /documentation`
+- `GET /documentation`
+- `PATCH /documentation/{document_id}`
+
+## Mobile App Layer
+- `POST /mobile/security/bind-device`
+- `GET /mobile/home`
+- `GET /mobile/offline/bootstrap`
