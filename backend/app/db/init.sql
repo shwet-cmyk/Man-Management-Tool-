@@ -82,3 +82,29 @@ VALUES
 ('audit', 'audit_log_list', 'MEDIUM', 'CONTEXT_DRIVEN', NULL, 'Show yesterday changes', NULL, NULL, NULL, 'AUDIT_YESTERDAY', 'QUERY', '/audit', 3),
 ('audit', 'audit_log_list', 'MEDIUM', 'CONTEXT_DRIVEN', NULL, 'Show user activity', NULL, NULL, NULL, 'AUDIT_USER_ACTIVITY', 'QUERY', '/audit', 4);
 END
+
+IF NOT EXISTS (SELECT 1 FROM productivity_policy)
+INSERT INTO productivity_policy (policy_name, scope_type, idle_threshold_minutes, productive_target_hours, borderline_lower_hours, underproductive_lower_hours, screenshot_capture_enabled, screenshot_frequency_minutes)
+VALUES ('Default Global Productivity Policy', 'GLOBAL', 5, 8, 6, 6, 0, NULL);
+
+IF NOT EXISTS (SELECT 1 FROM app_classification_master)
+INSERT INTO app_classification_master (app_name, executable_name, classification_type, app_category)
+VALUES ('TEZ ERP', 'tez.exe', 'PRODUCTIVE', 'ERP'),
+       ('Microsoft Excel', 'excel.exe', 'PRODUCTIVE', 'Office'),
+       ('Google Chrome', 'chrome.exe', 'NEUTRAL', 'Browser'),
+       ('YouTube', 'chrome.exe', 'UNPRODUCTIVE', 'Streaming');
+
+IF NOT EXISTS (SELECT 1 FROM url_classification_master)
+INSERT INTO url_classification_master (domain_name, classification_type)
+VALUES ('tezerp.com', 'PRODUCTIVE'),
+       ('stackoverflow.com', 'NEUTRAL'),
+       ('youtube.com', 'UNPRODUCTIVE'),
+       ('facebook.com', 'BLOCKED');
+
+IF NOT EXISTS (SELECT 1 FROM device_master)
+INSERT INTO device_master (device_uuid, device_name, os_name, os_version, employee_user_id, company_id, agent_version)
+VALUES ('SAMPLE-DEVICE-UUID-001', 'Sample Workstation', 'Windows', '11', 1, 1, '1.0.0');
+
+IF NOT EXISTS (SELECT 1 FROM daily_productivity_summary)
+INSERT INTO daily_productivity_summary (summary_date, user_id, device_id, company_id, present_minutes, active_minutes, productive_minutes, neutral_minutes, unproductive_minutes, idle_minutes, locked_minutes, hibernate_minutes, offline_minutes, shutdown_count, reboot_count, productivity_status)
+VALUES (CAST(GETDATE() AS DATE), 1, 1, 1, 540, 430, 370, 40, 20, 80, 20, 10, 0, 0, 0, 'BORDERLINE');

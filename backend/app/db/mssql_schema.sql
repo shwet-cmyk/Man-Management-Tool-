@@ -187,3 +187,219 @@ CREATE TABLE chatbot_quick_prompts (
 );
 
 CREATE INDEX IX_chatbot_quick_prompts_module_screen_role ON chatbot_quick_prompts(module_name, screen_key, role_id, is_active);
+
+CREATE TABLE device_master (
+    device_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_uuid NVARCHAR(200) NOT NULL UNIQUE,
+    device_name NVARCHAR(200) NOT NULL,
+    device_type NVARCHAR(100) NULL,
+    os_name NVARCHAR(100) NULL,
+    os_version NVARCHAR(100) NULL,
+    employee_user_id BIGINT NOT NULL,
+    company_id BIGINT NOT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    agent_version NVARCHAR(50) NULL,
+    registration_status NVARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
+    last_heartbeat_at DATETIME2 NULL,
+    registered_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE agent_registration (
+    registration_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    registration_token NVARCHAR(500) NOT NULL,
+    token_expires_at DATETIME2 NULL,
+    agent_status NVARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
+    last_sync_at DATETIME2 NULL,
+    last_error NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE productivity_policy (
+    policy_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    policy_name NVARCHAR(200) NOT NULL,
+    scope_type NVARCHAR(30) NOT NULL,
+    scope_reference_id BIGINT NULL,
+    idle_threshold_minutes INT NOT NULL,
+    productive_target_hours DECIMAL(10,2) NOT NULL,
+    borderline_lower_hours DECIMAL(10,2) NOT NULL,
+    underproductive_lower_hours DECIMAL(10,2) NOT NULL,
+    screenshot_capture_enabled BIT NOT NULL DEFAULT 0,
+    screenshot_frequency_minutes INT NULL,
+    raw_retention_days INT NOT NULL DEFAULT 90,
+    screenshot_retention_days INT NOT NULL DEFAULT 90,
+    summary_retention_type NVARCHAR(30) NOT NULL DEFAULT 'PERPETUAL',
+    warn_on_blacklisted_url BIT NOT NULL DEFAULT 1,
+    block_blacklisted_url BIT NOT NULL DEFAULT 0,
+    effective_from DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    effective_to DATETIME2 NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE app_classification_master (
+    app_classification_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    app_name NVARCHAR(200) NOT NULL,
+    executable_name NVARCHAR(200) NULL,
+    app_category NVARCHAR(100) NULL,
+    classification_type NVARCHAR(30) NOT NULL,
+    notes NVARCHAR(MAX) NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE url_classification_master (
+    url_classification_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    domain_name NVARCHAR(300) NOT NULL,
+    url_pattern NVARCHAR(500) NULL,
+    browser_scope NVARCHAR(100) NULL,
+    classification_type NVARCHAR(30) NOT NULL,
+    notes NVARCHAR(MAX) NULL,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_by BIGINT NULL,
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE raw_activity_log (
+    activity_log_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    event_type NVARCHAR(50) NOT NULL,
+    event_timestamp DATETIME2 NOT NULL,
+    active_app_name NVARCHAR(300) NULL,
+    active_executable NVARCHAR(300) NULL,
+    active_window_title NVARCHAR(MAX) NULL,
+    active_domain NVARCHAR(500) NULL,
+    active_url NVARCHAR(MAX) NULL,
+    classification_type NVARCHAR(30) NULL,
+    is_idle BIT NOT NULL DEFAULT 0,
+    is_locked BIT NOT NULL DEFAULT 0,
+    is_hibernated BIT NOT NULL DEFAULT 0,
+    input_source NVARCHAR(50) NULL,
+    duration_seconds INT NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE daily_productivity_summary (
+    daily_summary_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    summary_date DATE NOT NULL,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NULL,
+    company_id BIGINT NOT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    present_minutes INT NOT NULL DEFAULT 0,
+    active_minutes INT NOT NULL DEFAULT 0,
+    productive_minutes INT NOT NULL DEFAULT 0,
+    neutral_minutes INT NOT NULL DEFAULT 0,
+    unproductive_minutes INT NOT NULL DEFAULT 0,
+    idle_minutes INT NOT NULL DEFAULT 0,
+    locked_minutes INT NOT NULL DEFAULT 0,
+    hibernate_minutes INT NOT NULL DEFAULT 0,
+    offline_minutes INT NOT NULL DEFAULT 0,
+    shutdown_count INT NOT NULL DEFAULT 0,
+    reboot_count INT NOT NULL DEFAULT 0,
+    productivity_status NVARCHAR(30) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE monthly_productivity_summary (
+    monthly_summary_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    summary_month INT NOT NULL,
+    summary_year INT NOT NULL,
+    user_id BIGINT NOT NULL,
+    company_id BIGINT NOT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    present_minutes INT NOT NULL DEFAULT 0,
+    active_minutes INT NOT NULL DEFAULT 0,
+    productive_minutes INT NOT NULL DEFAULT 0,
+    neutral_minutes INT NOT NULL DEFAULT 0,
+    unproductive_minutes INT NOT NULL DEFAULT 0,
+    idle_minutes INT NOT NULL DEFAULT 0,
+    locked_minutes INT NOT NULL DEFAULT 0,
+    hibernate_minutes INT NOT NULL DEFAULT 0,
+    offline_minutes INT NOT NULL DEFAULT 0,
+    shutdown_count INT NOT NULL DEFAULT 0,
+    reboot_count INT NOT NULL DEFAULT 0,
+    productivity_status NVARCHAR(30) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL
+);
+
+CREATE TABLE policy_breach_log (
+    breach_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NOT NULL,
+    breach_timestamp DATETIME2 NOT NULL,
+    breach_type NVARCHAR(50) NOT NULL,
+    app_name NVARCHAR(300) NULL,
+    domain_name NVARCHAR(500) NULL,
+    url_value NVARCHAR(MAX) NULL,
+    policy_id BIGINT NULL,
+    action_taken NVARCHAR(100) NULL,
+    screenshot_captured BIT NOT NULL DEFAULT 0,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE screenshot_evidence (
+    screenshot_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    device_id BIGINT NOT NULL,
+    captured_at DATETIME2 NOT NULL,
+    trigger_type NVARCHAR(50) NOT NULL,
+    storage_path NVARCHAR(MAX) NOT NULL,
+    file_name NVARCHAR(500) NULL,
+    linked_breach_id BIGINT NULL,
+    expires_at DATETIME2 NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE underproductive_flag_log (
+    flag_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    summary_date DATE NOT NULL,
+    productive_minutes INT NOT NULL,
+    target_minutes INT NOT NULL,
+    productivity_status NVARCHAR(30) NOT NULL,
+    manager_notified BIT NOT NULL DEFAULT 0,
+    employee_notified BIT NOT NULL DEFAULT 0,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE productivity_audit_log (
+    audit_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NULL,
+    action_type NVARCHAR(100) NOT NULL,
+    target_entity NVARCHAR(100) NOT NULL,
+    target_id BIGINT NULL,
+    field_name NVARCHAR(200) NULL,
+    old_value NVARCHAR(MAX) NULL,
+    new_value NVARCHAR(MAX) NULL,
+    remarks NVARCHAR(MAX) NULL,
+    action_timestamp DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE INDEX IX_raw_activity_log_user_date ON raw_activity_log (user_id, event_timestamp);
+CREATE INDEX IX_daily_productivity_summary_user_date ON daily_productivity_summary (user_id, summary_date);
+CREATE INDEX IX_policy_breach_log_user_date ON policy_breach_log (user_id, breach_timestamp);
+CREATE INDEX IX_device_master_employee ON device_master (employee_user_id, is_active);

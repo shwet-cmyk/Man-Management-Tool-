@@ -281,3 +281,27 @@ Base path: `/api/v1`
 - `GET /chatbot/sessions/{session_id}/messages`
 - `GET /chatbot/quick-prompts`
 - `POST /chatbot/quick-prompts/usage`
+
+
+## Productivity & Activity Intelligence
+- `POST /productivity/agent/register`
+- `POST /productivity/agent/heartbeat`
+- `POST /productivity/agent/sync`
+- `GET /productivity/policy/current`
+- `POST /productivity/policy`
+- `GET /productivity/summary/daily`
+- `GET /productivity/team-summary`
+- `GET /productivity/activity-logs`
+- `GET /productivity/policy-breaches`
+- `GET /productivity/underproductive-report`
+- `GET /productivity/devices`
+- `POST /productivity/devices`
+- `PUT /productivity/devices/{id}/deactivate`
+- `GET /productivity/app-classification`
+- `POST /productivity/app-classification`
+- `PUT /productivity/app-classification/{id}`
+- `GET /productivity/url-classification`
+- `POST /productivity/url-classification`
+- `PUT /productivity/url-classification/{id}`
+- `GET /productivity/screenshots`
+- `GET /productivity/dashboard/widgets`

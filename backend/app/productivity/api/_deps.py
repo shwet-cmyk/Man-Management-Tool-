@@ -1,0 +1,47 @@
+from __future__ import annotations
+from app.productivity.repositories.device_repository import DeviceRepository
+from app.productivity.repositories.agent_registration_repository import AgentRegistrationRepository
+from app.productivity.repositories.raw_activity_log_repository import RawActivityLogRepository
+from app.productivity.repositories.productivity_policy_repository import ProductivityPolicyRepository
+from app.productivity.repositories.app_classification_repository import AppClassificationRepository
+from app.productivity.repositories.url_classification_repository import UrlClassificationRepository
+from app.productivity.repositories.daily_summary_repository import DailySummaryRepository
+from app.productivity.repositories.policy_breach_repository import PolicyBreachRepository
+from app.productivity.repositories.screenshot_repository import ScreenshotRepository
+from app.productivity.repositories.underproductive_flag_repository import UnderproductiveFlagRepository
+
+from app.productivity.services.device_service import DeviceService
+from app.productivity.services.agent_registration_service import AgentRegistrationService
+from app.productivity.services.policy_service import PolicyService
+from app.productivity.services.idle_computation_service import IdleComputationService
+from app.productivity.services.activity_ingestion_service import ActivityIngestionService
+from app.productivity.services.app_classification_service import AppClassificationService
+from app.productivity.services.url_classification_service import UrlClassificationService
+from app.productivity.services.breach_service import BreachService
+from app.productivity.services.screenshot_service import ScreenshotService
+from app.productivity.services.daily_summary_service import DailySummaryService
+from app.productivity.services.underproductive_service import UnderproductiveService
+
+_device_repo = DeviceRepository()
+_agent_repo = AgentRegistrationRepository()
+_raw_repo = RawActivityLogRepository()
+_policy_repo = ProductivityPolicyRepository()
+_app_repo = AppClassificationRepository()
+_url_repo = UrlClassificationRepository()
+_daily_repo = DailySummaryRepository()
+_breach_repo = PolicyBreachRepository()
+_screenshot_repo = ScreenshotRepository()
+_under_repo = UnderproductiveFlagRepository()
+
+
+device_service = DeviceService(_device_repo)
+agent_registration_service = AgentRegistrationService(_agent_repo)
+policy_service = PolicyService(_policy_repo)
+idle_service = IdleComputationService()
+activity_ingestion_service = ActivityIngestionService(_raw_repo, _daily_repo, _breach_repo, idle_service)
+app_classification_service = AppClassificationService(_app_repo)
+url_classification_service = UrlClassificationService(_url_repo)
+breach_service = BreachService(_breach_repo)
+screenshot_service = ScreenshotService(_screenshot_repo)
+daily_summary_service = DailySummaryService(_daily_repo)
+underproductive_service = UnderproductiveService(_under_repo)

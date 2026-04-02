@@ -56,3 +56,5 @@ make seed    # rerun DB schema + seed
 - Assistant sends route/screen context (`route_path`, `screen_key`, `module_name`) to backend `/api/v1/chatbot/query`.
 - Backend includes BAL/BLL/DAL scaffold under `backend/app/chatbot/` with session history endpoint.
 - Global assistant includes dynamic **Quick Questions (Smart Prompts)** chips with context/RBAC/data-driven filtering and click-to-query behavior.
+
+- Added Productivity & Activity Intelligence backend module (`/api/v1/productivity/*`) for device registration, activity ingestion, policy controls, summaries, breach tracking, and dashboard/report feeds.
