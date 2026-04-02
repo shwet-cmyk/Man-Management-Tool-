@@ -165,3 +165,25 @@ CREATE TABLE ChatbotMessages (
 
 CREATE INDEX IX_ChatbotSessions_UserID ON ChatbotSessions(UserID);
 CREATE INDEX IX_ChatbotMessages_SessionCreatedAt ON ChatbotMessages(SessionID, CreatedAt);
+
+CREATE TABLE chatbot_quick_prompts (
+    prompt_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    role_id BIGINT NULL,
+    priority_level NVARCHAR(20) NULL,
+    condition_type NVARCHAR(50) NULL,
+    condition_query NVARCHAR(MAX) NULL,
+    prompt_text_en NVARCHAR(500) NOT NULL,
+    prompt_text_hi NVARCHAR(500) NULL,
+    prompt_text_gu NVARCHAR(500) NULL,
+    prompt_text_mr NVARCHAR(500) NULL,
+    intent_code NVARCHAR(100) NOT NULL,
+    action_type NVARCHAR(50) NOT NULL,
+    route_path NVARCHAR(300) NULL,
+    display_order INT NOT NULL DEFAULT 0,
+    is_active BIT NOT NULL DEFAULT 1,
+    created_at DATETIME2 DEFAULT SYSDATETIME()
+);
+
+CREATE INDEX IX_chatbot_quick_prompts_module_screen_role ON chatbot_quick_prompts(module_name, screen_key, role_id, is_active);

@@ -279,3 +279,5 @@ Base path: `/api/v1`
 ## Contextual Chatbot
 - `POST /chatbot/query`
 - `GET /chatbot/sessions/{session_id}/messages`
+- `GET /chatbot/quick-prompts`
+- `POST /chatbot/quick-prompts/usage`

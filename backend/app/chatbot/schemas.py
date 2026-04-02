@@ -38,3 +38,15 @@ class ChatHistoryResponse(BaseModel):
     session_id: str
     count: int
     items: list[ChatMessage]
+
+
+class QuickPromptItem(BaseModel):
+    prompt_id: int
+    text: str
+    intent_code: str
+    action_type: str
+    route_path: str | None = None
+
+
+class QuickPromptsResponse(BaseModel):
+    prompts: list[QuickPromptItem]

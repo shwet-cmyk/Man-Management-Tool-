@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 const ROLE = 'Admin'
+const USER_ID = 1
+const LANGUAGE = 'en'
 const PRODUCT_NAME = 'TEZ Execution System'
 const COMPANY_NAME = 'TEZ Global'
 const FY = '2026-27'
@@ -106,8 +108,28 @@ function FloatingAssistant({ currentPath }) {
   const [draft, setDraft] = useState('')
   const [sessionId, setSessionId] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [quickPrompts, setQuickPrompts] = useState([])
+  const [showAllPrompts, setShowAllPrompts] = useState(false)
 
   const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
+  const moduleName = currentPath.split('/')[1] || 'dashboard'
+  const screenKey = `${moduleName}_${currentPath.split('/')[2] || 'main'}`
+
+  useEffect(() => {
+    if (!open) return
+    const loadPrompts = async () => {
+      try {
+        const url = `${apiBase}/chatbot/quick-prompts?module_name=${encodeURIComponent(moduleName)}&screen_key=${encodeURIComponent(screenKey)}&user_id=${USER_ID}&language=${LANGUAGE}&limit=7`
+        const resp = await fetch(url)
+        if (!resp.ok) return
+        const payload = await resp.json()
+        setQuickPrompts(payload.prompts || [])
+      } catch {
+        setQuickPrompts([])
+      }
+    }
+    loadPrompts()
+  }, [open, moduleName, screenKey, currentPath, apiBase])
 
   useEffect(() => {
     if (!open || !sessionId) return
@@ -126,9 +148,10 @@ function FloatingAssistant({ currentPath }) {
     loadHistory()
   }, [open, sessionId, apiBase])
 
-  const send = async () => {
-    if (!draft.trim() || loading) return
-    const nextMessage = draft.trim()
+  const send = async (prefilledText = null, promptId = null) => {
+    const sourceText = prefilledText ?? draft
+    if (!sourceText.trim() || loading) return
+    const nextMessage = sourceText.trim()
     setDraft('')
     setMessages((curr) => [...curr, { id: Date.now(), role: 'user', text: nextMessage }])
     setLoading(true)
@@ -141,16 +164,24 @@ function FloatingAssistant({ currentPath }) {
           session_id: sessionId,
           context: {
             route_path: currentPath,
-            screen_key: currentPath.replaceAll('/', '_') || 'dashboard_main',
-            module_name: currentPath.split('/')[1] || 'dashboard',
+            screen_key: screenKey,
+            module_name: moduleName,
           },
-          actor: { user_id: 1, role: 'Admin' },
+          actor: { user_id: USER_ID, role: ROLE },
         }),
       })
       if (!response.ok) throw new Error('query failed')
       const payload = await response.json()
       setSessionId(payload.session_id)
       setMessages((curr) => [...curr, { id: Date.now() + 1, role: 'assistant', text: payload.reply }])
+
+      if (promptId) {
+        fetch(`${apiBase}/chatbot/quick-prompts/usage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: USER_ID, prompt_id: promptId }),
+        }).catch(() => null)
+      }
     } catch {
       setMessages((curr) => [...curr, { id: Date.now() + 1, role: 'assistant', text: `I could not reach chatbot service. You are currently on ${currentPath}.` }])
     } finally {
@@ -158,11 +189,13 @@ function FloatingAssistant({ currentPath }) {
     }
   }
 
+  const displayedPrompts = showAllPrompts ? quickPrompts : quickPrompts.slice(0, 5)
+
   return (
     <>
       <button onClick={() => setOpen((v) => !v)} style={{ position: 'fixed', right: 24, bottom: 24, borderRadius: 999, width: 56, height: 56, border: 'none', background: '#1d4ed8', color: '#fff', fontSize: 22, cursor: 'pointer', zIndex: 40 }} aria-label="Open assistant">💬</button>
       {open && (
-        <section style={{ position: 'fixed', right: 24, bottom: 90, width: 360, height: 440, background: '#fff', border: '1px solid #cbd5e1', borderRadius: 10, boxShadow: '0 10px 35px rgba(15, 23, 42, 0.2)', display: 'grid', gridTemplateRows: 'auto 1fr auto', zIndex: 41 }}>
+        <section style={{ position: 'fixed', right: 24, bottom: 90, width: 390, height: 480, background: '#fff', border: '1px solid #cbd5e1', borderRadius: 10, boxShadow: '0 10px 35px rgba(15, 23, 42, 0.2)', display: 'grid', gridTemplateRows: 'auto 1fr auto auto', zIndex: 41 }}>
           <header style={{ padding: '10px 12px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between' }}>
             <strong>Execution Assistant</strong>
             <small style={{ color: '#475569' }}>{currentPath}</small>
@@ -174,9 +207,28 @@ function FloatingAssistant({ currentPath }) {
               </div>
             ))}
           </div>
+          <div style={{ borderTop: '1px solid #e2e8f0', padding: '8px 10px', background: '#fff' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {displayedPrompts.map((prompt) => (
+                <button
+                  key={prompt.prompt_id}
+                  onClick={() => send(prompt.text, prompt.prompt_id)}
+                  style={{ borderRadius: 999, border: '1px solid #bfdbfe', background: '#eff6ff', color: '#1e3a8a', padding: '6px 10px', cursor: 'pointer', fontSize: 12 }}
+                  title={prompt.intent_code}
+                >
+                  {prompt.text}
+                </button>
+              ))}
+            </div>
+            {quickPrompts.length > 5 && (
+              <button onClick={() => setShowAllPrompts((v) => !v)} style={{ marginTop: 6, fontSize: 12, border: 'none', background: 'none', color: '#2563eb', cursor: 'pointer' }}>
+                {showAllPrompts ? 'View less' : 'View more'}
+              </button>
+            )}
+          </div>
           <footer style={{ display: 'flex', gap: 6, padding: 10, borderTop: '1px solid #e2e8f0' }}>
             <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask about this screen..." style={{ flex: 1 }} />
-            <button onClick={send} disabled={loading}>{loading ? '...' : 'Send'}</button>
+            <button onClick={() => send()} disabled={loading}>{loading ? '...' : 'Send'}</button>
           </footer>
         </section>
       )}
