@@ -386,3 +386,15 @@ Every screen must define:
 - Security loop: secure login -> app lock -> quick re-auth.
 - Design system: compact, dark-premium, high-contrast, reusable components.
 - Delivery focus: approvals/chat/notifications are first-class, high-velocity workflows.
+
+---
+
+## 17) Global Header + Contextual Help Parity
+For web + mobile parity, every major screen should expose:
+- Product context in header (tenant/company + FY)
+- Quick actions (+)
+- Help (?) opening right-side/context sheet
+- Notification bell with unread count
+- Profile actions (profile/settings/security/logout)
+
+Contextual help content is keyed by `screen_key` and rendered from backend help API, not hardcoded copy.

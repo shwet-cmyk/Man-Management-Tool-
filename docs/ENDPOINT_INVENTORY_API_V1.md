@@ -268,3 +268,9 @@ Base path: `/api/v1`
 - `POST /mobile/security/bind-device`
 - `GET /mobile/home`
 - `GET /mobile/offline/bootstrap`
+
+## Contextual Help System
+- `GET /help/{screen_key}`
+- `GET /help`
+- `GET /help/route/map`
+- `GET /help/route/resolve`
