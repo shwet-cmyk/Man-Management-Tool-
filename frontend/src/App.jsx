@@ -1,192 +1,333 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
-const moduleTree = [
-  { label: 'Dashboard', children: ['Role Dashboard', 'Custom Dashboard'] },
-  { label: 'Project Module', children: ['Project List', 'Project Dashboard', 'Phases', 'Steps'] },
-  { label: 'Masters', children: ['RBAC / Rules', 'User Master', 'Company Master', 'Branch Master', 'Department Master'] },
-  { label: 'Interconnect Master', children: ['Grid', 'Coverage Matrix'] },
-  { label: 'Reports', children: ['Templates', 'Run', 'Export', 'Schedules'] },
-  { label: 'Analytics', children: ['Pre-built Charts', 'Saved Views', 'Alert Rules'] },
+const ROLE = 'Admin'
+
+const menuTree = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    roles: ['Admin', 'Manager', 'User'],
+    children: [
+      { label: 'Role Dashboard', path: '/dashboard' },
+      { label: 'Custom Dashboard', path: '/dashboard/custom' },
+    ],
+  },
+  {
+    key: 'projects',
+    label: 'Projects',
+    roles: ['Admin', 'Manager'],
+    children: [
+      { label: 'Project List', path: '/projects' },
+      { label: 'Project Dashboard', path: '/projects/dashboard' },
+      { label: 'Phases', path: '/projects/phases' },
+      { label: 'Tasks', path: '/tasks' },
+    ],
+  },
+  {
+    key: 'masters',
+    label: 'Masters',
+    roles: ['Admin'],
+    children: [
+      { label: 'RBAC', path: '/masters/rbac' },
+      { label: 'Users', path: '/masters/users' },
+      { label: 'Company', path: '/masters/company' },
+    ],
+  },
+  { key: 'interconnect', label: 'Interconnect', roles: ['Admin', 'Manager'], children: [{ label: 'Mappings', path: '/interconnect' }] },
+  { key: 'reports', label: 'Reports', roles: ['Admin', 'Manager'], children: [{ label: 'Reports', path: '/reports' }] },
+  { key: 'analytics', label: 'Analytics', roles: ['Admin', 'Manager'], children: [{ label: 'Analytics', path: '/analytics' }] },
+  { key: 'jobs', label: 'Jobs', roles: ['Admin', 'Manager'], children: [{ label: 'Job List', path: '/jobs' }] },
+  { key: 'timesheets', label: 'Timesheets', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Timesheet List', path: '/timesheets' }] },
+  { key: 'approvals', label: 'Approvals', roles: ['Admin', 'Manager'], children: [{ label: 'Approval Queue', path: '/approvals' }] },
+  { key: 'audit', label: 'Audit', roles: ['Admin'], children: [{ label: 'Audit Logs', path: '/audit' }] },
+  { key: 'chat', label: 'Chat', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Channels', path: '/chat' }] },
 ]
 
-const datasets = [
-  { code: 'TASK_EXECUTION', fields: ['task_id', 'status', 'assignee', 'planned_hours', 'actual_hours'] },
-  { code: 'JOB_COMMERCIAL', fields: ['job_id', 'client', 'billable_hours', 'cost', 'margin'] },
-  { code: 'USER_PRODUCTIVITY', fields: ['user_id', 'department', 'completed_tasks', 'utilization_pct'] },
+const projectRows = [
+  { id: 1, name: 'SAP Rollout', client: 'Acme', status: 'ACTIVE', sla: 'OK', progress: 45 },
+  { id: 2, name: 'Revamp', client: 'Globex', status: 'DELAYED', sla: 'BREACH', progress: 72 },
+]
+const taskRows = [
+  { id: 11, task: 'Design API', project: 'SAP Rollout', phase: 'Build', status: 'IN_PROGRESS', dependency: 'T-8', sla: 'OK', progress: 65 },
+  { id: 12, task: 'UAT', project: 'Revamp', phase: 'QA', status: 'BLOCKED', dependency: 'T-11', sla: 'BREACH', progress: 20 },
+]
+const jobRows = [
+  { id: 101, job: 'Backend Task', assignee: 'Aarav', status: 'IN_PROGRESS', sla: 'OK', spent: 8 },
+  { id: 102, job: 'Migration', assignee: 'Nina', status: 'PENDING', sla: 'BREACH', spent: 11 },
+]
+const timesheetRows = [
+  { id: 201, date: '2026-04-01', employee: 'Aarav', task: 'Design API', job: 'Backend Task', time: '09:00-11:00', overlap: false },
+  { id: 202, date: '2026-04-01', employee: 'Aarav', task: 'UAT', job: 'Migration', time: '10:30-12:00', overlap: true },
+]
+const approvalRows = [
+  { id: 301, module: 'TIMESHEET', reference: 'TS-88', level: 'L1', status: 'PENDING', pendingWith: 'Manager' },
+]
+const auditRows = [
+  { id: 401, user: 'Admin', action: 'UPDATE', module: 'TASK', field: 'status', timestamp: '2026-04-02T09:00:00Z' },
 ]
 
-const seedProjects = [
-  { id: 1, name: 'SAP Rollout', client: 'Acme', manager: 'Aarav', status: 'ACTIVE', health: 'ON_TRACK', progress: 42, estimatedCost: 500000, actualCost: 212000 },
-  { id: 2, name: 'Support Revamp', client: 'Globex', manager: 'Nina', status: 'ON_HOLD', health: 'AT_RISK', progress: 55, estimatedCost: 220000, actualCost: 188000 },
-]
+const defaultPanel = { open: false, mode: null, module: null, data: null }
 
-const seedWidgets = [
-  { id: 1, title: 'Phase Progress', dataset: 'TASK_EXECUTION', x: 'status', y: 'task_id', chartType: 'BAR' },
-  { id: 2, title: 'Cost vs Budget', dataset: 'JOB_COMMERCIAL', x: 'client', y: 'cost', chartType: 'LINE' },
-]
-
-const seedInterconnects = [
-  { id: 1, source: 'TASKS', target: 'JOBS', trigger: 'Task Approved', status: 'ACTIVE', coverage: 'COVERED' },
-  { id: 2, source: 'JOBS', target: 'TIMESHEETS', trigger: 'Job In Progress', status: 'ACTIVE', coverage: 'PENDING' },
-  { id: 3, source: 'PROJECT', target: 'TASKS', trigger: 'Project Activated', status: 'ACTIVE', coverage: 'PENDING' },
-]
+const statusColor = (status) => ({ ACTIVE: '#16a34a', DELAYED: '#dc2626', IN_PROGRESS: '#2563eb', BLOCKED: '#b45309', PENDING: '#475569' }[status] || '#334155')
 
 function App() {
-  const [selectedModule, setSelectedModule] = useState('Dashboard')
-  const [search, setSearch] = useState('')
-  const [projects, setProjects] = useState(seedProjects)
-  const [widgets, setWidgets] = useState(seedWidgets)
-  const [interconnects, setInterconnects] = useState(seedInterconnects)
-  const [widgetForm, setWidgetForm] = useState({ title: 'New Widget', dataset: 'TASK_EXECUTION', x: 'status', y: 'task_id', agg: 'COUNT', chartType: 'BAR' })
-  const [projectForm, setProjectForm] = useState({ projectName: 'New Project', client: 'Client', manager: 'Manager', estimatedCost: 0, estimatedHours: 0, managementPoc: '', operationsPoc: '', implementationPoc: '', supportPoc: '', developmentPoc: '', accountsPoc: '' })
-  const [interconnectForm, setInterconnectForm] = useState({ source: 'PROJECT', target: 'TASKS', trigger: 'Project Activated', validation: 'RBAC + scope + status check', failure: 'Retry + alert + audit' })
-  const [analyticsForm, setAnalyticsForm] = useState({ company: '', branch: '', department: '', employee: '', client: '', project: '', date_from: '', date_to: '', priority: '' })
-  const [savedViews, setSavedViews] = useState([])
-  const [reportFields, setReportFields] = useState(['company_id', 'name', 'status'])
+  const [expanded, setExpanded] = useState(['projects'])
+  const [selection, setSelection] = useState([])
+  const [filters, setFilters] = useState({})
+  const [panel, setPanel] = useState(defaultPanel)
+  const [bulkMode, setBulkMode] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [data, setData] = useState({ projects: projectRows, tasks: taskRows, jobs: jobRows, timesheets: timesheetRows, approvals: approvalRows, audit: auditRows })
+  const [chat, setChat] = useState([{ id: 1, user: 'system', text: 'Welcome to execution chat' }])
+  const [typing, setTyping] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const filteredInterconnects = useMemo(() => interconnects.filter((r) => `${r.source} ${r.target} ${r.trigger} ${r.coverage}`.toLowerCase().includes(search.toLowerCase())), [interconnects, search])
-  const filteredProjects = useMemo(() => projects.filter((p) => `${p.name} ${p.client} ${p.manager} ${p.status}`.toLowerCase().includes(search.toLowerCase())), [projects, search])
-  const currentDataset = datasets.find((d) => d.code === widgetForm.dataset)
+  const visibleMenu = useMemo(() => menuTree.filter((item) => item.roles.includes(ROLE)), [])
 
-  const saveWidget = () => setWidgets((curr) => [...curr, { id: curr.length + 1, ...widgetForm }])
-  const saveProject = () => setProjects((curr) => [...curr, { id: curr.length + 1, name: projectForm.projectName, client: projectForm.client, manager: projectForm.manager, status: 'DRAFT', health: 'ON_TRACK', progress: 0, estimatedCost: Number(projectForm.estimatedCost), actualCost: 0 }])
-  const saveInterconnect = () => setInterconnects((curr) => [...curr, { id: curr.length + 1, ...interconnectForm, status: 'ACTIVE', coverage: 'PENDING' }])
-  const saveAnalyticsView = () => setSavedViews((curr) => [...curr, { id: curr.length + 1, name: `View ${curr.length + 1}`, ...analyticsForm }])
+  useEffect(() => {
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws'
+    const ws = new WebSocket(`${wsUrl}/web-user`)
+    ws.onmessage = (evt) => {
+      try {
+        const parsed = JSON.parse(evt.data)
+        if (parsed.type === 'CHAT') setChat((curr) => [...curr, { id: Date.now(), user: parsed.from || 'peer', text: parsed.payload?.message || '' }])
+      } catch {
+        // ignore malformed messages
+      }
+    }
+    return () => ws.close()
+  }, [])
+
+  const openPanel = (mode, module, row = null) => setPanel({ open: true, mode, module, data: row })
+
+  const onAdd = () => openPanel('create', location.pathname)
+  const onExport = () => alert(`Export API triggered for ${location.pathname}`)
+  const onFilter = () => setModalOpen(true)
+  const onBulk = () => setBulkMode((v) => !v)
+  const onAnalytics = () => openPanel('analytics', location.pathname)
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr 420px', height: '100vh', fontFamily: 'Inter, sans-serif' }}>
-      <aside style={{ borderRight: '1px solid #d9e0ea', padding: 12, background: '#0f172a', color: '#fff', overflow: 'auto' }}>
-        <h3>TEZ Execution System</h3>
-        <p style={{ fontSize: 12, opacity: 0.8 }}>RBAC-controlled module tree</p>
-        {moduleTree.map((node) => (
-          <div key={node.label} style={{ marginBottom: 8 }}>
-            <button onClick={() => setSelectedModule(node.label)} style={{ width: '100%', textAlign: 'left', padding: 8, border: 'none', borderRadius: 6, background: selectedModule === node.label ? '#1d4ed8' : '#1e293b', color: '#fff' }}>{node.label}</button>
-            <div style={{ marginLeft: 12, marginTop: 4, fontSize: 12, opacity: 0.85 }}>{node.children.map((child) => <div key={child}>• {child}</div>)}</div>
-          </div>
-        ))}
-      </aside>
-
-      <main style={{ padding: 16, background: '#f3f5f8', overflow: 'auto' }}>
-        <h2>{selectedModule}</h2>
-        <div style={{ background: '#fff', border: '1px solid #d9e0ea', borderRadius: 8, padding: 12, marginTop: 12, display: 'flex', gap: 8 }}>
-          <button>Add</button><button>Export</button><button>Filter</button><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" /><button>Bulk Action</button>
-          <button style={{ marginLeft: 'auto' }}>Analytics</button>
+    <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr auto', height: '100vh', fontFamily: 'Inter, sans-serif' }}>
+      <Sidebar visibleMenu={visibleMenu} expanded={expanded} setExpanded={setExpanded} />
+      <div style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto', background: '#f1f5f9' }}>
+        <ActionBar onAdd={onAdd} onExport={onExport} onFilter={onFilter} onBulk={onBulk} onAnalytics={onAnalytics} bulkMode={bulkMode} />
+        <div style={{ padding: 12, overflow: 'auto' }}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/projects" />} />
+            <Route path="/projects" element={<GridModule title="Projects" module="projects" rows={data.projects} columns={projectColumns(openPanel)} selection={selection} setSelection={setSelection} />} />
+            <Route path="/tasks" element={<GridModule title="Tasks" module="tasks" rows={data.tasks} columns={taskColumns(openPanel)} selection={selection} setSelection={setSelection} />} />
+            <Route path="/jobs" element={<GridModule title="Jobs" module="jobs" rows={data.jobs} columns={jobColumns(openPanel)} selection={selection} setSelection={setSelection} />} />
+            <Route path="/timesheets" element={<GridModule title="Timesheets" module="timesheets" rows={data.timesheets} columns={timesheetColumns(openPanel)} selection={selection} setSelection={setSelection} />} />
+            <Route path="/approvals" element={<GridModule title="Approvals" module="approvals" rows={data.approvals} columns={approvalColumns(openPanel)} selection={selection} setSelection={setSelection} />} />
+            <Route path="/audit" element={<GridModule title="Audit Logs" module="audit" rows={data.audit} columns={auditColumns(openPanel)} selection={selection} setSelection={setSelection} />} />
+            <Route path="/chat" element={<ChatModule chat={chat} setChat={setChat} setTyping={setTyping} typing={typing} />} />
+            <Route path="*" element={<SimplePage title={location.pathname.replace('/', '') || 'Module'} />} />
+          </Routes>
         </div>
+        <BottomPanel />
+      </div>
 
-        {selectedModule === 'Dashboard' && (
-          <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 12 }}>
-            {widgets.map((w) => (
-              <div key={w.id} style={{ background: '#fff', border: '1px solid #d9e0ea', borderRadius: 8, padding: 12 }}>
-                <strong>{w.title}</strong>
-                <p style={{ margin: 0, fontSize: 13 }}>Dataset: {w.dataset}</p>
-                <p style={{ margin: 0, fontSize: 13 }}>X: {w.x} | Y: {w.y} | Type: {w.chartType}</p>
-                <div style={{ marginTop: 8, height: 70, background: 'linear-gradient(90deg,#dbeafe,#e2e8f0)', borderRadius: 6 }} />
-              </div>
-            ))}
-          </div>
-        )}
+      <ContextPanel panel={panel} close={() => setPanel(defaultPanel)} onSave={(payload) => handleSave(payload, panel, setData, setPanel)} />
 
-        {selectedModule === 'Project Module' && (
-          <div style={{ marginTop: 12, background: '#fff', border: '1px solid #d9e0ea', borderRadius: 8, padding: 12 }}>
-            <h4>Project List</h4>
-            <table width="100%" cellPadding="8" style={{ borderCollapse: 'collapse' }}>
-              <thead><tr style={{ textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}><th>Name</th><th>Client</th><th>Manager</th><th>Status</th><th>Health</th><th>Progress</th><th>Budget</th></tr></thead>
-              <tbody>{filteredProjects.map((p) => <tr key={p.id} style={{ borderBottom: '1px solid #f3f4f6' }}><td>{p.name}</td><td>{p.client}</td><td>{p.manager}</td><td>{p.status}</td><td>{p.health}</td><td>{p.progress}%</td><td>{p.actualCost}/{p.estimatedCost}</td></tr>)}</tbody>
-            </table>
-          </div>
-        )}
-
-        {selectedModule === 'Interconnect Master' && (
-          <div style={{ background: '#fff', border: '1px solid #d9e0ea', borderRadius: 8, padding: 12, marginTop: 12 }}>
-            <h4>Interconnect Grid</h4>
-            <table width="100%" cellPadding="8" style={{ borderCollapse: 'collapse' }}>
-              <thead><tr style={{ textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}><th>Source</th><th>Target</th><th>Trigger</th><th>Status</th><th>Coverage</th></tr></thead>
-              <tbody>{filteredInterconnects.map((r) => <tr key={r.id} style={{ borderBottom: '1px solid #f3f4f6' }}><td>{r.source}</td><td>{r.target}</td><td>{r.trigger}</td><td>{r.status}</td><td>{r.coverage}</td></tr>)}</tbody>
-            </table>
-          </div>
-        )}
-
-        {selectedModule === 'Analytics' && (
-          <div style={{ background: '#fff', border: '1px solid #d9e0ea', borderRadius: 8, padding: 12, marginTop: 12 }}>
-            <h4>Global Analytics (RBAC + Scope Aware)</h4>
-            <div style={{ marginTop: 10, height: 110, borderRadius: 8, background: 'linear-gradient(120deg,#111827,#d4af37)' }} />
-            <p style={{ marginTop: 8 }}>Saved views: {savedViews.length}</p>
-          </div>
-        )}
-
-        {selectedModule === 'Reports' && (
-          <div style={{ background: '#fff', border: '1px solid #d9e0ea', borderRadius: 8, padding: 12, marginTop: 12 }}>
-            <h4>Reporting Builder</h4>
-            <p>Field toggling and export formats (Excel/PDF).</p>
-            <p>Selected fields: {reportFields.join(', ')}</p>
-          </div>
-        )}
-      </main>
-
-      <aside style={{ borderLeft: '1px solid #d9e0ea', padding: 16, background: '#fff', overflow: 'auto' }}>
-        <h3>Right Drawer</h3>
-
-        {selectedModule === 'Dashboard' && (
-          <>
-            <h4>Create Widget</h4>
-            <label>Dataset</label><select value={widgetForm.dataset} onChange={(e) => setWidgetForm((c) => ({ ...c, dataset: e.target.value }))} style={{ width: '100%', marginBottom: 8 }}>{datasets.map((d) => <option key={d.code}>{d.code}</option>)}</select>
-            <label>X-Axis</label><select value={widgetForm.x} onChange={(e) => setWidgetForm((c) => ({ ...c, x: e.target.value }))} style={{ width: '100%', marginBottom: 8 }}>{currentDataset?.fields.map((f) => <option key={f}>{f}</option>)}</select>
-            <label>Y-Axis</label><select value={widgetForm.y} onChange={(e) => setWidgetForm((c) => ({ ...c, y: e.target.value }))} style={{ width: '100%', marginBottom: 8 }}>{currentDataset?.fields.map((f) => <option key={f}>{f}</option>)}</select>
-            <label>Aggregation</label><select value={widgetForm.agg} onChange={(e) => setWidgetForm((c) => ({ ...c, agg: e.target.value }))} style={{ width: '100%', marginBottom: 8 }}>{['SUM','COUNT','AVG','MIN','MAX'].map((a) => <option key={a}>{a}</option>)}</select>
-            <label>Chart Type</label><select value={widgetForm.chartType} onChange={(e) => setWidgetForm((c) => ({ ...c, chartType: e.target.value }))} style={{ width: '100%', marginBottom: 8 }}>{['BAR','LINE','SCATTER','PIE','TABLE','KPI'].map((c) => <option key={c}>{c}</option>)}</select>
-            <button onClick={saveWidget}>Preview</button> <button onClick={saveWidget}>Save Widget</button>
-          </>
-        )}
-
-        {selectedModule === 'Project Module' && (
-          <>
-            <h4>Create Project</h4>
-            <label>Project Name</label><input value={projectForm.projectName} onChange={(e) => setProjectForm((c) => ({ ...c, projectName: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Client</label><input value={projectForm.client} onChange={(e) => setProjectForm((c) => ({ ...c, client: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Project Manager</label><input value={projectForm.manager} onChange={(e) => setProjectForm((c) => ({ ...c, manager: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Estimated Cost</label><input type="number" value={projectForm.estimatedCost} onChange={(e) => setProjectForm((c) => ({ ...c, estimatedCost: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Estimated Hours</label><input type="number" value={projectForm.estimatedHours} onChange={(e) => setProjectForm((c) => ({ ...c, estimatedHours: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <p style={{ fontSize: 12 }}>Mandatory group POCs: Management, Operations, Implementation, Support, Development, Accounts</p>
-            <button onClick={saveProject}>Save Project</button>
-          </>
-        )}
-
-        {selectedModule === 'Interconnect Master' && (
-          <>
-            <h4>Add/Edit Interconnect</h4>
-            <label>Source</label><input value={interconnectForm.source} onChange={(e) => setInterconnectForm((c) => ({ ...c, source: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Target</label><input value={interconnectForm.target} onChange={(e) => setInterconnectForm((c) => ({ ...c, target: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Trigger</label><input value={interconnectForm.trigger} onChange={(e) => setInterconnectForm((c) => ({ ...c, trigger: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Validation</label><textarea value={interconnectForm.validation} onChange={(e) => setInterconnectForm((c) => ({ ...c, validation: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <label>Failure Handling</label><textarea value={interconnectForm.failure} onChange={(e) => setInterconnectForm((c) => ({ ...c, failure: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} />
-            <button onClick={saveInterconnect}>Save</button>
-          </>
-        )}
-
-        {selectedModule === 'Analytics' && (
-          <>
-            <h4>Analytics Filters</h4>
-            {Object.keys(analyticsForm).map((key) => (<div key={key}><label>{key}</label><input value={analyticsForm[key]} onChange={(e) => setAnalyticsForm((c) => ({ ...c, [key]: e.target.value }))} style={{ width: '100%', marginBottom: 8 }} /></div>))}
-            <button onClick={saveAnalyticsView}>Save View</button><button style={{ marginLeft: 6 }}>Run Analytics</button>
-          </>
-        )}
-
-        {selectedModule === 'Reports' && (
-          <>
-            <h4>Report Builder</h4>
-            <label><input type="checkbox" checked={reportFields.includes('company_id')} onChange={() => setReportFields((f) => f.includes('company_id') ? f.filter((x) => x !== 'company_id') : [...f, 'company_id'])} /> company_id</label><br />
-            <label><input type="checkbox" checked={reportFields.includes('name')} onChange={() => setReportFields((f) => f.includes('name') ? f.filter((x) => x !== 'name') : [...f, 'name'])} /> name</label><br />
-            <label><input type="checkbox" checked={reportFields.includes('status')} onChange={() => setReportFields((f) => f.includes('status') ? f.filter((x) => x !== 'status') : [...f, 'status'])} /> status</label>
-            <div style={{ marginTop: 8 }}><button>Preview</button> <button>Export Excel</button> <button>Export PDF</button></div>
-          </>
-        )}
-
-        <hr />
-        <h4>Bottom Panel</h4>
-        <p>Comments · Audit logs · Notes · Attachments</p>
-      </aside>
+      {modalOpen && <FilterModal filters={filters} setFilters={setFilters} onClose={() => setModalOpen(false)} />}
     </div>
   )
 }
+
+function Sidebar({ visibleMenu, expanded, setExpanded }) {
+  return (
+    <aside style={{ background: '#0f172a', color: 'white', padding: 12, overflow: 'auto' }}>
+      <h3>TEZ OS</h3>
+      {visibleMenu.map((menu) => {
+        const isOpen = expanded.includes(menu.key)
+        return (
+          <div key={menu.key} style={{ marginBottom: 8 }}>
+            <button onClick={() => setExpanded((curr) => (isOpen ? curr.filter((x) => x !== menu.key) : [...curr, menu.key]))} style={sidebarBtn}>{isOpen ? '▾' : '▸'} {menu.label}</button>
+            {isOpen && menu.children.map((child) => (
+              <NavLink key={child.path} to={child.path} style={({ isActive }) => ({ ...subLink, background: isActive ? '#1d4ed8' : 'transparent' })}>{child.label}</NavLink>
+            ))}
+          </div>
+        )
+      })}
+    </aside>
+  )
+}
+
+function ActionBar({ onAdd, onExport, onFilter, onBulk, onAnalytics, bulkMode }) {
+  return (
+    <div style={{ display: 'flex', gap: 8, padding: 12, borderBottom: '1px solid #cbd5e1', background: '#fff' }}>
+      <button onClick={onAdd}>Add</button>
+      <button onClick={onExport}>Export</button>
+      <button onClick={onFilter}>Filter</button>
+      <button onClick={onBulk}>{bulkMode ? 'Bulk ON' : 'Bulk Action'}</button>
+      <button style={{ marginLeft: 'auto' }} onClick={onAnalytics}>Analytics</button>
+    </div>
+  )
+}
+
+function GridModule({ title, module, rows, columns, selection, setSelection }) {
+  return <><h3>{title}</h3><DataGrid rows={rows} columns={columns} module={module} selection={selection} setSelection={setSelection} /></>
+}
+
+function DataGrid({ rows, columns, selection, setSelection, module }) {
+  const [sort, setSort] = useState({ key: columns[0].key, dir: 'asc' })
+  const [page, setPage] = useState(1)
+  const pageSize = 5
+
+  const sorted = useMemo(() => [...rows].sort((a, b) => `${a[sort.key]}`.localeCompare(`${b[sort.key]}`) * (sort.dir === 'asc' ? 1 : -1)), [rows, sort])
+  const paged = sorted.slice((page - 1) * pageSize, page * pageSize)
+  const toggleOne = (id) => setSelection((curr) => (curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id]))
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #cbd5e1', borderRadius: 8 }}>
+      <table width="100%" cellPadding="8" style={{ borderCollapse: 'collapse' }}>
+        <thead><tr>
+          <th><input type="checkbox" onChange={(e) => setSelection(e.target.checked ? rows.map((r) => r.id) : [])} /></th>
+          {columns.map((c) => <th key={c.key} onClick={() => setSort((s) => ({ key: c.key, dir: s.dir === 'asc' ? 'desc' : 'asc' }))} style={{ cursor: 'pointer', textAlign: 'left' }}>{c.label}</th>)}
+          <th>Actions</th>
+        </tr></thead>
+        <tbody>
+          {paged.map((r) => (
+            <tr key={r.id} onDoubleClick={() => columns[0].onView?.(r)} style={{ borderTop: '1px solid #e2e8f0', cursor: 'pointer' }}>
+              <td><input type="checkbox" checked={selection.includes(r.id)} onChange={() => toggleOne(r.id)} /></td>
+              {columns.map((c) => <td key={c.key} onClick={() => c.onView?.(r)}>{c.render ? c.render(r[c.key], r) : r[c.key]}</td>)}
+              <td>
+                <select onChange={(e) => e.target.value && ({ view: columns[0].onView, edit: columns[0].onEdit, delete: columns[0].onDelete }[e.target.value]?.(r))}>
+                  <option value="">Select</option>
+                  <option value="view">View</option><option value="edit">Edit</option><option value="delete">Delete</option>
+                </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: 8 }}>
+        <span>{module}: {rows.length} rows</span>
+        <div><button onClick={() => setPage((p) => Math.max(1, p - 1))}>Prev</button> <span>{page}</span> <button onClick={() => setPage((p) => (p * pageSize < rows.length ? p + 1 : p))}>Next</button></div>
+      </div>
+    </div>
+  )
+}
+
+function ContextPanel({ panel, close, onSave }) {
+  const [form, setForm] = useState({})
+  const [error, setError] = useState('')
+  useEffect(() => { setForm(panel.data || {}) }, [panel])
+  if (!panel.open) return <aside style={{ width: 0 }} />
+  const header = `${panel.mode?.toUpperCase()} • ${panel.module}`.replace('/', '')
+  const save = () => {
+    if (panel.mode === 'create' && !form.name && !form.task && !form.job) return setError('Name/Task/Job is required')
+    setError('')
+    onSave(form)
+  }
+
+  return (
+    <aside style={{ width: 360, borderLeft: '1px solid #cbd5e1', background: '#fff', padding: 12 }}>
+      <h3>Context Panel</h3>
+      <h4>{header}</h4>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        {['Details', 'Jobs', 'Dependencies', 'Timesheets', 'Audit', 'Notes'].map((t) => <button key={t}>{t}</button>)}
+      </div>
+      {panel.mode === 'analytics' ? <p>Analytics panel opened for current module.</p> : (
+        <>
+          <label>Title</label>
+          <input value={form.name || form.task || form.job || ''} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} style={{ width: '100%' }} />
+          <label>Status</label>
+          <input value={form.status || ''} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} style={{ width: '100%' }} />
+          {error && <p style={{ color: 'crimson' }}>{error}</p>}
+          <button onClick={save}>Save</button> <button onClick={close}>Close</button>
+        </>
+      )}
+    </aside>
+  )
+}
+
+function FilterModal({ filters, setFilters, onClose }) {
+  const keys = ['company', 'branch', 'department', 'employee', 'client', 'project', 'dateFrom', 'dateTo', 'priority']
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.25)', display: 'grid', placeItems: 'center' }}>
+      <div style={{ background: '#fff', padding: 16, borderRadius: 8, width: 400 }}>
+        <h3>Filter Engine</h3>
+        {keys.map((k) => <div key={k}><label>{k}</label><input value={filters[k] || ''} onChange={(e) => setFilters((f) => ({ ...f, [k]: e.target.value }))} style={{ width: '100%', marginBottom: 6 }} /></div>)}
+        <button onClick={onClose}>Apply</button>
+      </div>
+    </div>
+  )
+}
+
+function BottomPanel() {
+  return <div style={{ background: '#fff', padding: 8, borderTop: '1px solid #cbd5e1' }}>Bottom Panel Tabs: Comments | Audit | Notes | Attachments</div>
+}
+
+function SimplePage({ title }) { return <div style={{ background: '#fff', border: '1px solid #cbd5e1', padding: 16 }}>{title} module route is active.</div> }
+
+function ChatModule({ chat, setChat, typing, setTyping }) {
+  const [msg, setMsg] = useState('')
+  const send = () => {
+    if (!msg.trim()) return
+    setChat((curr) => [...curr, { id: Date.now(), user: 'me', text: msg }])
+    setMsg('')
+    setTyping(false)
+  }
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 280px', height: '100%', gap: 8 }}>
+      <div style={box}><h4>Channels</h4><div># general</div><div># projects</div></div>
+      <div style={box}><h4>Chat</h4>{chat.map((m) => <div key={m.id}><strong>{m.user}:</strong> {m.text}</div>)}<input value={msg} onChange={(e) => { setMsg(e.target.value); setTyping(true) }} style={{ width: '100%' }} /><button onClick={send}>Send</button>{typing && <small>typing...</small>}</div>
+      <div style={box}><h4>Thread / Info</h4><p>Read receipts and thread details.</p></div>
+    </div>
+  )
+}
+
+function handleSave(payload, panel, setData, setPanel) {
+  const module = panel.module?.split('/')[1]
+  if (!module || !['projects', 'tasks', 'jobs', 'timesheets', 'approvals', 'audit'].includes(module)) return setPanel(defaultPanel)
+  setData((curr) => {
+    const rows = [...curr[module]]
+    if (panel.mode === 'edit' && panel.data?.id) return { ...curr, [module]: rows.map((r) => (r.id === panel.data.id ? { ...r, ...payload } : r)) }
+    if (panel.mode === 'create') return { ...curr, [module]: [...rows, { id: Date.now(), ...payload }] }
+    return curr
+  })
+  setPanel(defaultPanel)
+}
+
+const sidebarBtn = { width: '100%', textAlign: 'left', border: 'none', background: '#1e293b', color: 'white', padding: 8, borderRadius: 6 }
+const subLink = { display: 'block', color: 'white', textDecoration: 'none', padding: '6px 10px', marginTop: 4, borderRadius: 6, fontSize: 14 }
+const box = { background: '#fff', border: '1px solid #cbd5e1', padding: 8, borderRadius: 8 }
+
+const projectColumns = (open) => [
+  { key: 'name', label: 'Project', onView: (r) => open('view', '/projects', r), onEdit: (r) => open('edit', '/projects', r), onDelete: () => alert('Delete project') },
+  { key: 'client', label: 'Client' },
+  { key: 'status', label: 'Status', render: (v, r) => <span style={{ color: statusColor(v), textDecoration: 'underline' }} onClick={() => open('view', '/projects/status-history', r)}>{v}</span> },
+  { key: 'sla', label: 'SLA', render: (v) => <span style={{ color: v === 'BREACH' ? '#dc2626' : '#16a34a' }}>{v}</span> },
+  { key: 'progress', label: 'Progress' },
+]
+const taskColumns = (open) => [
+  { key: 'task', label: 'Task Name', onView: (r) => open('view', '/tasks', r), onEdit: (r) => open('edit', '/tasks', r), onDelete: () => alert('Delete task') },
+  { key: 'project', label: 'Project' }, { key: 'phase', label: 'Phase' },
+  { key: 'status', label: 'Status', render: (v) => <span style={{ color: statusColor(v) }}>{v}</span> },
+  { key: 'dependency', label: 'Dependency', render: (v) => <button onClick={() => alert(`Dependency graph: ${v}`)}>🔗 {v}</button> },
+  { key: 'sla', label: 'SLA', render: (v) => <span style={{ color: v === 'BREACH' ? '#dc2626' : '#16a34a' }}>{v}</span> },
+  { key: 'progress', label: 'Progress' },
+]
+const jobColumns = (open) => [
+  { key: 'job', label: 'Job Name', onView: (r) => open('view', '/jobs', r), onEdit: (r) => open('edit', '/jobs', r), onDelete: () => alert('Delete job') },
+  { key: 'assignee', label: 'Assigned User' }, { key: 'status', label: 'Status', render: (v) => <span style={{ color: statusColor(v) }}>{v}</span> },
+  { key: 'sla', label: 'SLA', render: (v) => <span style={{ color: v === 'BREACH' ? '#dc2626' : '#16a34a' }}>{v}</span> }, { key: 'spent', label: 'Time Spent' },
+]
+const timesheetColumns = (open) => [
+  { key: 'date', label: 'Date', onView: (r) => open('view', '/timesheets', r), onEdit: (r) => open('edit', '/timesheets', r), onDelete: () => alert('Delete timesheet') },
+  { key: 'employee', label: 'Employee' }, { key: 'task', label: 'Task' }, { key: 'job', label: 'Job' }, { key: 'time', label: 'Time' },
+  { key: 'overlap', label: 'Overlap', render: (v, r) => v ? <button onClick={() => alert(`Conflicts for ${r.employee}`)}>⚠️ Overlap</button> : 'OK' },
+]
+const approvalColumns = (open) => [
+  { key: 'module', label: 'Module', onView: (r) => open('view', '/approvals', r), onEdit: (r) => open('edit', '/approvals', r), onDelete: () => alert('Delete approval') },
+  { key: 'reference', label: 'Reference' }, { key: 'level', label: 'Level' }, { key: 'status', label: 'Status' }, { key: 'pendingWith', label: 'Pending With' },
+]
+const auditColumns = (open) => [
+  { key: 'user', label: 'User', onView: (r) => open('view', '/audit', r), onEdit: (r) => open('edit', '/audit', r), onDelete: () => alert('Delete audit') },
+  { key: 'action', label: 'Action' }, { key: 'module', label: 'Module' }, { key: 'field', label: 'Field Changed' }, { key: 'timestamp', label: 'Timestamp' },
+]
 
 export default App
