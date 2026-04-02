@@ -50,6 +50,31 @@ function App() {
   const location = useLocation()
   const navigate = useNavigate()
   const visibleMenu = useMemo(() => menuTree.filter((item) => item.roles.includes(ROLE)), [])
+  const currentModuleKey = location.pathname.replace('/', '') || 'dashboard'
+
+  const handleExport = () => {
+    const rows = data[currentModuleKey]
+    if (!rows?.length) {
+      setPanel({ open: true, mode: 'export', module: location.pathname, data: { message: 'No records available to export.' } })
+      return
+    }
+    const headers = Object.keys(rows[0])
+    const csv = [
+      headers.join(','),
+      ...rows.map((row) => headers.map((h) => JSON.stringify(row[h] ?? '')).join(',')),
+    ].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `${currentModuleKey || 'module'}_export.csv`
+    link.click()
+    URL.revokeObjectURL(link.href)
+    setPanel({ open: true, mode: 'export', module: location.pathname, data: { message: `Exported ${rows.length} records.` } })
+  }
+
+  const handleFilter = () => {
+    setPanel({ open: true, mode: 'filter', module: location.pathname, data: { filters: ['status', 'owner', 'date_range'] } })
+  }
 
   const openHelp = async () => {
     setHelpOpen(true)
@@ -85,7 +110,7 @@ function App() {
         <Sidebar visibleMenu={visibleMenu} expanded={expanded} setExpanded={setExpanded} />
 
         <div style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto', background: '#f1f5f9' }}>
-          <ActionBar onAdd={() => setPanel({ open: true, mode: 'create', module: location.pathname, data: null })} onExport={() => alert('Export API called')} onFilter={() => alert('Filter panel (module specific)')} onBulk={() => setBulkMode((v) => !v)} onAnalytics={() => setPanel({ open: true, mode: 'analytics', module: location.pathname, data: null })} bulkMode={bulkMode} />
+          <ActionBar onAdd={() => setPanel({ open: true, mode: 'create', module: location.pathname, data: null })} onExport={handleExport} onFilter={handleFilter} onBulk={() => setBulkMode((v) => !v)} onAnalytics={() => setPanel({ open: true, mode: 'analytics', module: location.pathname, data: null })} bulkMode={bulkMode} />
           <div style={{ padding: 12, overflow: 'auto' }}>
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" />} />
@@ -399,7 +424,17 @@ function ActionBar({ onAdd, onExport, onFilter, onBulk, onAnalytics, bulkMode })
 function GridModule({ title, rows, columns, selection, setSelection }) { return <><h3>{title}</h3><DataGrid rows={rows} columns={columns} selection={selection} setSelection={setSelection} /></> }
 function DataGrid({ rows, columns, selection, setSelection }) { return <table width="100%" cellPadding="8" style={{ background: '#fff' }}><thead><tr><th><input type="checkbox" onChange={(e) => setSelection(e.target.checked ? rows.map((r) => r.id) : [])} /></th>{columns.map((c) => <th key={c.key}>{c.label}</th>)}<th>Action</th></tr></thead><tbody>{rows.map((r) => <tr key={r.id} onDoubleClick={() => columns[0].onView?.(r)}><td><input type="checkbox" checked={selection.includes(r.id)} onChange={() => setSelection((c) => c.includes(r.id) ? c.filter((x) => x !== r.id) : [...c, r.id])} /></td>{columns.map((c) => <td key={c.key}>{c.render ? c.render(r[c.key], r) : r[c.key]}</td>)}<td><select onChange={(e) => e.target.value && ({ view: columns[0].onView, edit: columns[0].onEdit }[e.target.value]?.(r))}><option value="">Select</option><option value="view">View</option><option value="edit">Edit</option></select></td></tr>)}</tbody></table> }
 
-function ContextPanel({ panel, close }) { if (!panel.open) return <aside style={{ width: 0 }} />; return <aside style={{ width: 340, background: '#fff', borderLeft: '1px solid #cbd5e1', padding: 12 }}><h3>Context Panel</h3><h4>{panel.mode} - {panel.module}</h4><button onClick={close}>Close</button></aside> }
+function ContextPanel({ panel, close }) {
+  if (!panel.open) return <aside style={{ width: 0 }} />
+  return (
+    <aside style={{ width: 340, background: '#fff', borderLeft: '1px solid #cbd5e1', padding: 12 }}>
+      <h3>Context Panel</h3>
+      <h4>{panel.mode} - {panel.module}</h4>
+      {panel.data && <pre style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: 8, overflow: 'auto', maxHeight: 360 }}>{JSON.stringify(panel.data, null, 2)}</pre>}
+      <button onClick={close}>Close</button>
+    </aside>
+  )
+}
 function BottomPanel() { return <div style={{ background: '#fff', borderTop: '1px solid #e2e8f0', padding: 8 }}>Bottom Panel: Comments | Audit | Notes | Attachments</div> }
 function SimplePage({ title }) { return <div style={{ background: '#fff', padding: 16 }}>{title}</div> }
 
