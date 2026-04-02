@@ -48,9 +48,23 @@ def route_map():
     return {"mappings": [{"route_path": r["route_path"], "screen_key": r["screen_key"], "module_name": r["module_name"]} for r in _active_help_map().values()]}
 
 
+
+
+def _match_route(pattern: str, path: str) -> bool:
+    pattern_parts = [p for p in pattern.strip("/").split("/") if p]
+    path_parts = [p for p in path.strip("/").split("/") if p]
+    if len(pattern_parts) != len(path_parts):
+        return False
+    for expected, actual in zip(pattern_parts, path_parts):
+        if expected.startswith(":"):
+            continue
+        if expected != actual:
+            return False
+    return True
+
 @router.get("/route/resolve")
 def resolve_by_route(path: str):
     for row in _active_help_map().values():
-        if row["route_path"] == path:
+        if _match_route(row["route_path"], path):
             return row
     raise HTTPException(status_code=404, detail="No help mapping found for route")

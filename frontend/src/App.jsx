@@ -6,20 +6,6 @@ const PRODUCT_NAME = 'TEZ Execution System'
 const COMPANY_NAME = 'TEZ Global'
 const FY = '2026-27'
 
-const SCREEN_KEY_BY_PATH = {
-  '/dashboard': 'dashboard_main',
-  '/projects': 'project_list',
-  '/tasks': 'task_list',
-  '/jobs': 'job_list',
-  '/timesheets': 'timesheet_list',
-  '/approvals': 'approval_inbox',
-  '/audit': 'audit_log_list',
-  '/interconnect': 'interconnect_grid',
-  '/reports': 'report_run',
-  '/analytics': 'analytics_prebuilt',
-  '/chat': 'chat_home',
-  '/notifications': 'notification_center',
-}
 
 const menuTree = [
   { key: 'dashboard', label: 'Dashboard', roles: ['Admin', 'Manager', 'User'], children: [{ label: 'Main', path: '/dashboard' }] },
@@ -51,6 +37,7 @@ function App() {
   const [helpOpen, setHelpOpen] = useState(false)
   const [helpLoading, setHelpLoading] = useState(false)
   const [helpContent, setHelpContent] = useState(null)
+  const [helpCache, setHelpCache] = useState({})
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -71,14 +58,24 @@ function App() {
   }, [])
 
   const openHelp = async () => {
-    const key = SCREEN_KEY_BY_PATH[location.pathname] || 'dashboard_main'
     setHelpOpen(true)
+    const cacheKey = location.pathname
+    if (helpCache[cacheKey]) {
+      setHelpContent(helpCache[cacheKey])
+      return
+    }
     setHelpLoading(true)
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
     try {
-      const resp = await fetch(`${apiBase}/help/${key}`)
-      const data = await resp.json()
+      const resolver = await fetch(`${apiBase}/help/route/resolve?path=${encodeURIComponent(location.pathname)}`)
+      let data
+      if (resolver.ok) {
+        data = await resolver.json()
+      } else {
+        data = await (await fetch(`${apiBase}/help/dashboard_main`)).json()
+      }
       setHelpContent(data)
+      setHelpCache((curr) => ({ ...curr, [cacheKey]: data }))
     } catch {
       setHelpContent({ title: 'Help unavailable', description: 'Help content not yet configured for this screen', steps_json: [], rules_json: [], errors_json: [], tips_json: [] })
     } finally {
