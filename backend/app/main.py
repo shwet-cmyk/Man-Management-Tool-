@@ -38,6 +38,7 @@ from app.modules.execution_governance.router import router as execution_governan
 from app.modules.help.router import router as help_router
 from app.chatbot.router import router as chatbot_router
 from app.productivity.api.productivity_router import router as productivity_router
+from app.product_intelligence.api.product_intelligence_router import router as product_intelligence_router
 from app.workers.scheduler import run_periodic_jobs
 
 app = FastAPI(
@@ -121,3 +122,4 @@ app.include_router(execution_governance_router, prefix=settings.api_v1_prefix)
 app.include_router(help_router, prefix=settings.api_v1_prefix)
 app.include_router(chatbot_router, prefix=settings.api_v1_prefix)
 app.include_router(productivity_router, prefix=settings.api_v1_prefix)
+app.include_router(product_intelligence_router, prefix=settings.api_v1_prefix)

@@ -403,3 +403,168 @@ CREATE INDEX IX_raw_activity_log_user_date ON raw_activity_log (user_id, event_t
 CREATE INDEX IX_daily_productivity_summary_user_date ON daily_productivity_summary (user_id, summary_date);
 CREATE INDEX IX_policy_breach_log_user_date ON policy_breach_log (user_id, breach_timestamp);
 CREATE INDEX IX_device_master_employee ON device_master (employee_user_id, is_active);
+
+CREATE TABLE ux_event_log (
+    ux_event_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NULL,
+    company_id BIGINT NULL,
+    branch_id BIGINT NULL,
+    department_id BIGINT NULL,
+    session_id UNIQUEIDENTIFIER NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    element_label NVARCHAR(300) NULL,
+    event_type NVARCHAR(100) NOT NULL,
+    event_timestamp DATETIME2 NOT NULL,
+    value_text NVARCHAR(MAX) NULL,
+    value_number DECIMAL(18,4) NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_page_session (
+    page_session_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    session_id UNIQUEIDENTIFIER NOT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    entered_at DATETIME2 NOT NULL,
+    exited_at DATETIME2 NULL,
+    duration_seconds INT NULL,
+    scroll_depth_percent DECIMAL(5,2) NULL,
+    abandonment_flag BIT NOT NULL DEFAULT 0,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_dead_click_log (
+    dead_click_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    element_label NVARCHAR(300) NULL,
+    click_timestamp DATETIME2 NOT NULL,
+    click_count INT NOT NULL DEFAULT 1,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_rage_click_log (
+    rage_click_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    element_label NVARCHAR(300) NULL,
+    first_click_at DATETIME2 NOT NULL,
+    last_click_at DATETIME2 NOT NULL,
+    click_count INT NOT NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_error_event_log (
+    ux_error_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id BIGINT NULL,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    error_type NVARCHAR(100) NOT NULL,
+    error_code NVARCHAR(100) NULL,
+    error_message NVARCHAR(MAX) NULL,
+    api_path NVARCHAR(300) NULL,
+    event_timestamp DATETIME2 NOT NULL,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_heatmap_aggregate (
+    heatmap_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    route_path NVARCHAR(300) NOT NULL,
+    screen_key NVARCHAR(200) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    element_id NVARCHAR(200) NULL,
+    heatmap_type NVARCHAR(50) NOT NULL,
+    aggregate_date DATE NOT NULL,
+    interaction_count INT NOT NULL DEFAULT 0,
+    metadata_json NVARCHAR(MAX) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE ux_ai_recommendation (
+    recommendation_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    route_path NVARCHAR(300) NULL,
+    recommendation_title NVARCHAR(500) NOT NULL,
+    recommendation_text NVARCHAR(MAX) NOT NULL,
+    evidence_summary NVARCHAR(MAX) NULL,
+    confidence_score DECIMAL(5,2) NULL,
+    severity_level NVARCHAR(30) NULL,
+    status NVARCHAR(30) NOT NULL DEFAULT 'NEW',
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    reviewed_by BIGINT NULL,
+    reviewed_at DATETIME2 NULL
+);
+
+CREATE TABLE release_note_master (
+    release_note_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    release_version NVARCHAR(100) NOT NULL,
+    release_title NVARCHAR(500) NOT NULL,
+    release_summary NVARCHAR(MAX) NOT NULL,
+    release_date DATETIME2 NOT NULL,
+    release_type NVARCHAR(50) NULL,
+    visibility_scope NVARCHAR(50) NOT NULL DEFAULT 'ALL',
+    is_published BIT NOT NULL DEFAULT 0,
+    published_at DATETIME2 NULL,
+    created_by BIGINT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE release_note_module_map (
+    release_note_module_map_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    release_note_id BIGINT NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    route_path NVARCHAR(300) NULL,
+    change_type NVARCHAR(100) NULL
+);
+
+CREATE TABLE feature_change_log (
+    feature_change_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    release_version NVARCHAR(100) NOT NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    screen_key NVARCHAR(200) NULL,
+    route_path NVARCHAR(300) NULL,
+    component_name NVARCHAR(300) NULL,
+    field_name NVARCHAR(200) NULL,
+    old_value NVARCHAR(MAX) NULL,
+    new_value NVARCHAR(MAX) NULL,
+    change_category NVARCHAR(100) NOT NULL,
+    changed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+
+CREATE TABLE help_refresh_log (
+    help_refresh_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    screen_key NVARCHAR(200) NOT NULL,
+    route_path NVARCHAR(300) NULL,
+    module_name NVARCHAR(100) NOT NULL,
+    prior_help_version NVARCHAR(100) NULL,
+    new_help_version NVARCHAR(100) NULL,
+    refresh_reason NVARCHAR(MAX) NULL,
+    refresh_mode NVARCHAR(30) NOT NULL,
+    refresh_status NVARCHAR(30) NOT NULL,
+    triggered_by_release_version NVARCHAR(100) NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    published_at DATETIME2 NULL
+);
+
+CREATE INDEX IX_ux_event_log_screen_time ON ux_event_log (screen_key, event_timestamp);
+CREATE INDEX IX_ux_event_log_user_time ON ux_event_log (user_id, event_timestamp);
+CREATE INDEX IX_ux_error_event_log_screen_time ON ux_error_event_log (screen_key, event_timestamp);
+CREATE INDEX IX_ux_ai_recommendation_status ON ux_ai_recommendation (status, created_at);
+CREATE INDEX IX_release_note_master_version ON release_note_master (release_version, release_date);

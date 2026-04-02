@@ -96,6 +96,7 @@ function App() {
               <Route path="/timesheets" element={<GridModule title="Timesheets" rows={data.timesheets} columns={timesheetColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
               <Route path="/approvals" element={<GridModule title="Approvals" rows={data.approvals} columns={approvalColumns(setPanel)} selection={selection} setSelection={setSelection} />} />
               <Route path="/governance/compliance" element={<ModuleCompliancePage />} />
+              <Route path="/settings/profile/new-features" element={<NewFeaturesPage />} />
               <Route path="*" element={<SimplePage title={location.pathname} />} />
             </Routes>
           </div>
@@ -261,7 +262,7 @@ function GlobalHeader({ onHelp, onQuickAdd, onOpenNotifications, onHome, onOpenS
         <button onClick={onOpenNotifications}>🔔<span style={{ color: '#f59e0b', marginLeft: 4 }}>3</span></button>
         <div style={{ position: 'relative' }}>
           <button onClick={() => setProfileOpen((v) => !v)}>Admin ▾</button>
-          {profileOpen && <Dropdown items={[['Assistant Settings', onOpenSettings], ['My Profile', () => {}], ['Logout', () => {}]]} onClose={() => setProfileOpen(false)} />}
+          {profileOpen && <Dropdown items={[['Assistant Settings', onOpenSettings], ['New Features', () => window.location.assign('/settings/profile/new-features')], ['My Profile', () => {}], ['Logout', () => {}]]} onClose={() => setProfileOpen(false)} />}
         </div>
       </div>
     </header>
@@ -329,6 +330,40 @@ function ModuleCompliancePage() {
           </tbody>
         </table>
       )}
+    </div>
+  )
+}
+
+function NewFeaturesPage() {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(false)
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`${apiBase}/product-intelligence/release-notes/latest`)
+        if (res.ok) setItems(await res.json())
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  return (
+    <div style={{ background: '#fff', padding: 12 }}>
+      <h3>New Features</h3>
+      {loading && <p>Loading release notes...</p>}
+      {!loading && items.map((item) => (
+        <article key={item.release_note_id} style={{ border: '1px solid #e2e8f0', borderRadius: 8, padding: 10, marginBottom: 8 }}>
+          <strong>{item.release_title}</strong>
+          <div style={{ fontSize: 12, color: '#64748b' }}>{item.release_version} · {new Date(item.release_date).toLocaleDateString()}</div>
+          <p>{item.release_summary}</p>
+        </article>
+      ))}
+      {!loading && !items.length && <p>No release notes published yet.</p>}
     </div>
   )
 }

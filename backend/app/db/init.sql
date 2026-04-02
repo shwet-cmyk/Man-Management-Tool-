@@ -108,3 +108,15 @@ VALUES ('SAMPLE-DEVICE-UUID-001', 'Sample Workstation', 'Windows', '11', 1, 1, '
 IF NOT EXISTS (SELECT 1 FROM daily_productivity_summary)
 INSERT INTO daily_productivity_summary (summary_date, user_id, device_id, company_id, present_minutes, active_minutes, productive_minutes, neutral_minutes, unproductive_minutes, idle_minutes, locked_minutes, hibernate_minutes, offline_minutes, shutdown_count, reboot_count, productivity_status)
 VALUES (CAST(GETDATE() AS DATE), 1, 1, 1, 540, 430, 370, 40, 20, 80, 20, 10, 0, 0, 0, 'BORDERLINE');
+
+IF NOT EXISTS (SELECT 1 FROM release_note_master)
+INSERT INTO release_note_master (release_version, release_title, release_summary, release_date, release_type, is_published, published_at)
+VALUES ('v2.4.1', 'Smart Prompt and Assistant Improvements', 'Added quick prompts, mascot states, and contextual chat enhancements.', SYSDATETIME(), 'FEATURE', 1, SYSDATETIME());
+
+IF NOT EXISTS (SELECT 1 FROM feature_change_log)
+INSERT INTO feature_change_log (release_version, module_name, screen_key, route_path, component_name, field_name, old_value, new_value, change_category)
+VALUES ('v2.4.1', 'Tasks', 'task_list', '/tasks', 'TaskGrid', 'add_button_label', 'Add', 'Create Task', 'LABEL');
+
+IF NOT EXISTS (SELECT 1 FROM help_refresh_log)
+INSERT INTO help_refresh_log (screen_key, route_path, module_name, prior_help_version, new_help_version, refresh_reason, refresh_mode, refresh_status, triggered_by_release_version)
+VALUES ('task_list', '/tasks', 'Tasks', 'v1', 'v2', 'Release v2.4.1 UI update', 'AUTO_DRAFT', 'GENERATED', 'v2.4.1');

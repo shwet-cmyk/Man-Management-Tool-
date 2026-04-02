@@ -58,3 +58,5 @@ make seed    # rerun DB schema + seed
 - Global assistant includes dynamic **Quick Questions (Smart Prompts)** chips with context/RBAC/data-driven filtering and click-to-query behavior.
 
 - Added Productivity & Activity Intelligence backend module (`/api/v1/productivity/*`) for device registration, activity ingestion, policy controls, summaries, breach tracking, and dashboard/report feeds.
+
+- Added Product Intelligence & UX Optimization APIs (`/api/v1/product-intelligence/*`) for telemetry ingestion, friction analytics, AI UX suggestions, release notes, and help-refresh orchestration.

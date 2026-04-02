@@ -308,3 +308,19 @@ Base path: `/api/v1`
 - `PUT /productivity/url-classification/{id}`
 - `GET /productivity/screenshots`
 - `GET /productivity/dashboard/widgets`
+
+
+## Product Intelligence & UX Optimization
+- `POST /product-intelligence/ux-events`
+- `GET /product-intelligence/overview`
+- `GET /product-intelligence/heatmap`
+- `GET /product-intelligence/dead-clicks`
+- `GET /product-intelligence/rage-clicks`
+- `GET /product-intelligence/errors`
+- `GET /product-intelligence/ai-suggestions`
+- `PUT /product-intelligence/ai-suggestions/{id}`
+- `GET /product-intelligence/release-notes/latest`
+- `GET /product-intelligence/release-notes`
+- `GET /product-intelligence/help-refresh-log`
+- `POST /product-intelligence/help-refresh/run`
+- `GET /product-intelligence/feature-changes`
