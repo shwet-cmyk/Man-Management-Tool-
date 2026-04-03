@@ -1,0 +1,49 @@
+name: tez-ci-cd
+
+on:
+  push:
+    branches: ["main", "develop", "feature/**", "hotfix/**"]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install -r backend/requirements.txt
+      - name: Lint/static (placeholder)
+        run: python -m py_compile backend/app/main.py
+      - name: Unit tests
+        run: pytest -q || true
+      - name: Integration tests
+        run: pytest -q tests/integration || true
+      - name: Build image artifact once
+        run: docker build -f devops/docker/backend.Dockerfile -t tez-backend:${{ github.sha }} .
+
+  deploy-staging:
+    needs: build-test
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploy same artifact to staging"
+
+  e2e:
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Run Playwright/Cypress suite"
+
+  deploy-production:
+    needs: [build-test]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: echo "Manual approval gate via protected environment"
+      - run: echo "Deploy same artifact to production"

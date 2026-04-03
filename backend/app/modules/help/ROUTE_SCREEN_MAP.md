@@ -1,0 +1,81 @@
+# Route Path to Screen Key Mapping
+
+| Route Path | Screen Key | Module |
+|---|---|---|
+| `/dashboard` | `dashboard_main` | Dashboard |
+| `/dashboard/settings` | `dashboard_widget_settings` | Dashboard |
+| `/dashboard/widgets/create` | `dashboard_create_widget` | Dashboard |
+| `/dashboard/analytics` | `dashboard_analytics_panel` | Dashboard |
+| `/projects` | `project_list` | Project |
+| `/projects/create` | `project_create` | Project |
+| `/projects/:id/edit` | `project_edit` | Project |
+| `/projects/:id` | `project_detail` | Project |
+| `/projects/:id/dashboard` | `project_dashboard` | Project |
+| `/projects/:id/pocs` | `project_pocs` | Project |
+| `/projects/:id/budget` | `project_budget` | Project |
+| `/projects/:id/phases` | `project_phase_list` | Project |
+| `/projects/:id/phases/create` | `project_phase_create` | Project |
+| `/projects/:id/steps` | `project_step_builder` | Project |
+| `/tasks` | `task_list` | Task |
+| `/tasks/create` | `task_create` | Task |
+| `/tasks/:id/edit` | `task_edit` | Task |
+| `/tasks/:id` | `task_detail` | Task |
+| `/tasks/:id/dependencies` | `task_dependency` | Task |
+| `/tasks/:id/jobs` | `task_jobs_tab` | Task |
+| `/tasks/:id/timesheets` | `task_timesheet_tab` | Task |
+| `/tasks/:id/status-history` | `task_status_history` | Task |
+| `/jobs` | `job_list` | Job |
+| `/jobs/create` | `job_create` | Job |
+| `/jobs/:id/edit` | `job_edit` | Job |
+| `/jobs/:id` | `job_detail` | Job |
+| `/jobs/:id/timesheets` | `job_timesheet_view` | Job |
+| `/jobs/:id/cost` | `job_cost_analysis` | Job |
+| `/timesheets` | `timesheet_list` | Timesheet |
+| `/timesheets/create` | `timesheet_create` | Timesheet |
+| `/timesheets/:id/edit` | `timesheet_edit` | Timesheet |
+| `/timesheets/overlaps` | `timesheet_overlap_report` | Timesheet |
+| `/timesheets/:id/expenses` | `timesheet_expense_section` | Timesheet |
+| `/timesheets/:id/reimbursements` | `timesheet_reimbursement_section` | Timesheet |
+| `/approvals` | `approval_inbox` | Approval |
+| `/approvals/:id` | `approval_detail` | Approval |
+| `/approvals/:id/reject` | `approval_reject_modal` | Approval |
+| `/approvals/history` | `approval_history` | Approval |
+| `/tickets` | `ticket_list` | Ticket |
+| `/tickets/create` | `ticket_create` | Ticket |
+| `/tickets/:id` | `ticket_detail` | Ticket |
+| `/tickets/:id/followups` | `ticket_followup` | Ticket |
+| `/masters/rbac/roles` | `rbac_role_list` | RBAC |
+| `/masters/rbac/roles/create` | `rbac_role_create` | RBAC |
+| `/masters/rbac/privileges` | `rbac_privilege_tree` | RBAC |
+| `/masters/users` | `user_master_list` | Masters |
+| `/masters/users/create` | `user_master_create` | Masters |
+| `/masters/company` | `company_master_list` | Masters |
+| `/masters/branch` | `branch_master_list` | Masters |
+| `/masters/department` | `department_master_list` | Masters |
+| `/task-master/groups` | `task_group_master` | Masters |
+| `/task-master` | `task_master_list` | Masters |
+| `/interconnect` | `interconnect_grid` | Interconnect |
+| `/interconnect/coverage` | `interconnect_coverage_matrix` | Interconnect |
+| `/reports/templates` | `report_templates` | Reports |
+| `/reports/run` | `report_run` | Reports |
+| `/reports/export` | `report_export` | Reports |
+| `/reports/schedules` | `report_schedules` | Reports |
+| `/analytics/prebuilt` | `analytics_prebuilt` | Analytics |
+| `/analytics/saved-views` | `analytics_saved_views` | Analytics |
+| `/analytics/alert-rules` | `analytics_alert_rules` | Analytics |
+| `/chat` | `chat_home` | Chat |
+| `/chat/dm/:id` | `chat_dm` | Chat |
+| `/chat/channel/:id` | `chat_channel` | Chat |
+| `/notifications` | `notification_center` | Notifications |
+| `/notifications/settings` | `notification_settings` | Notifications |
+| `/audit/logs` | `audit_log_list` | Audit |
+| `/audit/logs/:id` | `audit_log_detail` | Audit |
+| `/ux` | `ux_analytics_dashboard` | Product Intelligence |
+| `/ux/screen-detail/:id` | `ux_screen_detail_analytics` | Product Intelligence |
+| `/devlogs` | `devlogs_dashboard` | Developer Ops |
+| `/devlogs/detail/:id` | `devlogs_trace_detail` | Developer Ops |
+| `/audit/list` | `audit_logs_main` | Governance |
+| `/audit/detail/:id` | `audit_detail_main` | Governance |
+| `/automation/list` | `automation_engine_list_main` | Automation |
+| `/automation/rules/:id/edit` | `automation_rule_entry_main` | Automation |
+| `/automation/history/:id` | `automation_execution_history_main` | Automation |
